@@ -43,7 +43,6 @@ app.get('/r/:id', (req, res) => {
 });
 
 app.use(express.static(path.join(__dirname, 'public')));
-app.use('/spotdb', express.static(path.join(__dirname, 'public', 'spotdb));
 
 async function getAccessToken() {
     const response = await fetch('https://accounts.spotify.com/api/token', {
