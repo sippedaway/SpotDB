@@ -50,6 +50,7 @@ Includes **albums, singles, EPs...**
 
 D. Track:
 - Duration
+- Credits
 - Popularity score
 - Rating (clean/explicit)
 - Release date
@@ -87,6 +88,8 @@ G. Episode:
 - Is playable?
 - Show the episode is found on
 - Description (description + html_description variables)
+
+And probably more I missed...
 
 ## Version
 #### 1.0
