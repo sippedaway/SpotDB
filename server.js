@@ -8,8 +8,6 @@ const { JSDOM } = require('jsdom');
 const app = express();
 const port = process.env.PORT || 3000;
 
-require('dotenv').config({ path: 'tokens.env' });
-
 const SPOTIFY_API_URL = 'https://api.spotify.com/v1';
 const CLIENT_ID = process.env.CLIENT_ID;
 const CLIENT_SECRET = process.env.CLIENT_SECRET;
