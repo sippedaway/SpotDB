@@ -1,3 +1,5 @@
+![db.sipped.org header](https://raw.githubusercontent.com/sippedaway/SpotDB/refs/heads/main/github/SpotDB.png)
+
 [![HTML](https://img.shields.io/badge/HTML-%23E34F26.svg?logo=html5&logoColor=white)](#)
 [![CSS](https://img.shields.io/badge/CSS-1572B6?logo=css3&logoColor=fff)](#)
 [![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?logo=javascript&logoColor=000)](#)
@@ -6,7 +8,7 @@
 [![GitHub created at](https://img.shields.io/github/created-at/sippedaway/SpotDB)](#)
 [![GitHub last commit](https://img.shields.io/github/last-commit/sippedaway/SpotDB)](#)
 
-# [SpotDB](https://db.sipped.org/) - Work in progress - Website unavailable!
+# [SpotDB](https://db.sipped.org/)
 SpotDB is a platform that lets you search for Spotify albums, tracks, artists, playlists ([and more](#As-much-information-as-you-probably-need), and gather detailed information about what you searched for. SpotDB is a completely open-source platform that uses the official Spotify [WebAPI](https://developer.spotify.com/documentation/web-api/), as well as additional [third-party APIs](#API) to gather information like track lyrics, writers and more.
 
 [<kbd> <br> db.sipped.org <br> </kbd>](https://db.sipped.org)
@@ -87,7 +89,8 @@ G. Episode:
 
 ## Version
 #### 1.0
-- **Estimated release date:** Mid-way February 2025
+- **Release date**: 2025-02-08
+- Hosted on Vercel + GitHub Pages
 - Base release
 - Basic mobile device support
 - Most likely unfound bugs and issues
