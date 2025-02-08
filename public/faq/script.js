@@ -13,12 +13,12 @@ document.addEventListener("DOMContentLoaded", function () {
     const logo = document.getElementById('logo');
 
     logo.addEventListener("mouseenter", () => {
-        logo.src = '/spotdb/spotdb_themed.png';
-    });
+      logo.src = 'https://raw.githubusercontent.com/sippedaway/SpotDB/refs/heads/main/public/spotdb/SpotDB_themed.png';
+  });
 
-    logo.addEventListener("mouseleave", () => {
-        logo.src = '/spotdb/spotdb_white.png';
-    });
+  logo.addEventListener("mouseleave", () => {
+      logo.src = 'https://raw.githubusercontent.com/sippedaway/SpotDB/refs/heads/main/public/spotdb/SpotDB_White.png';
+  });
 });
 
 function toggleDarkMode() {
