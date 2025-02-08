@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FAQ & Contact | SpotDB</title>
+    <link rel="icon" href="/spotdb/favicon.png">
+    <link rel="stylesheet" href="/faq/styles.css">
+    <link rel="stylesheet" href="/nav/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="/faq/script.js" defer></script>
+</head>
+
+<body>
+    <nav class="navbar">
+        <div class="navbar-left">
+            <button onclick='window.location.href="/faq/#2"' class="menu-button m-h">API</button>
+            <div class="menu-popup m-h">
+                <button onclick='window.open("https://developer.spotify.com/documentation/web-api", "_blank")'>API</button>
+                <button onclick='window.open("/faq", "_blank")'>FAQ & Documentation</button>
+                <button onclick='window.open("https://github.com/sippedaway/SpotDB", "_blank")'>GitHub repository</button>
+            </div>
+            <button onclick="window.location.href='/users'" class="menu-button m-h">Users</button>
+        </div>
+        <div class="navbar-center">
+            <a href="/"><img class="logo" id="logo" src="/spotdb/SpotDB_white.png" alt="SpotDB logo"></a>
+            <div class="nav-search-container">
+                <div class="nav-search-bar">
+                    <i style="margin-left: 5px;" class="fas fa-search"></i>
+                    <input type="text" id="nav-search-input" placeholder="Search for artists, albums, singles...">
+                </div>
+            </div>
+        </div>
+        <div class="navbar-right m-h">
+            <button onclick='toggleDarkMode()' class="menu-button">Dark mode</button>
+            <button onclick="window.open('https://open.spotify.com', 'blank')" class="spotify-button">
+                <i style="margin-right: 5px;" class="fab fa-spotify"></i>Visit Spotify
+            </button>
+        </div>
+    </nav>
+
+
+    <div class="faq-container">
+        <button class="faq-toggle-button" id="faqToggleBtn">Show Questions</button>
+
+        <div class="faq-questions">
+            <h2>General</h2>
+            <ul>
+                <li class="faq-question" id="question1" data-answer-id="answer1">What is SpotDB?</li>
+                <li class="faq-question" id="question2" data-answer-id="answer2">Where do we find this data?</li>
+                <li class="faq-question" id="question3" data-answer-id="answer3">Can I contribute to SpotDB?</li>
+                <li class="faq-question" id="question4" data-answer-id="answer4">Where can I get the source code?</li>
+                <li class="faq-question" id="question5" data-answer-id="answer5">What language is SpotDB written in?</li>
+                <li class="faq-question" id="question6" data-answer-id="answer6">Does SpotDB have an API?</li>
+                <li class="faq-question" id="question7" data-answer-id="answer7">Why are there no charts, streams, etc.?</li>
+                <li class="faq-question" id="question8" data-answer-id="answer8">What can I search?</li>
+            </ul>
+
+            <h2>Data and Limitations</h2>
+            <ul>
+                <li class="faq-question" id="question9" data-answer-id="answer9">What data is missing?</li>
+                <li class="faq-question" id="question10" data-answer-id="answer10">ID</li>
+                <li class="faq-question" id="question11" data-answer-id="answer11">Copyrights</li>
+                <li class="faq-question" id="question12" data-answer-id="answer12">Region (Market)</li>
+                <li class="faq-question" id="question13" data-answer-id="answer13">External IDs</li>
+                <li class="faq-question" id="question14" data-answer-id="answer14">Embed</li>
+                <li class="faq-question" id="question15" data-answer-id="answer15">The lyrics are wrong!</li>
+                <li class="faq-question" id="question16" data-answer-id="answer16">You leaked this!</li>
+            </ul>
+
+            <h2>Account and Legal</h2>
+            <ul>
+                <li class="faq-question" id="question17" data-answer-id="answer17">Do I have to sign in to use SpotDB?</li>
+                <li class="faq-question" id="question18" data-answer-id="answer18">Legal</li>
+            </ul>
+
+            <h2>Contact</h2>
+            <ul>
+                <li class="faq-question" id="question19" data-answer-id="answer19">Contact us (feedback, questions, bugs)</li>
+            </ul>
+
+        </div>
+
+        <div class="faq-answers">
+            <div id="answer1" class="faq-answer">
+                <h2>What is SpotDB?</h2>
+                <p>SpotDB is a platform that lets you search for all items on Spotify. SpotDB is completely open-source platform that uses the official Spotify WebAPI, as well as additional third-party APIs to gather information like lyrics, producers, writers and more.</p>
+            </div>
+            <div id="answer2" class="faq-answer">
+                <h2>Where do we find this data?</h2>
+                <p>SpotDB uses a few APIs to complete certain tasks, such as search, fetch data, gather lyrics and more. Mainly, we use Spotify's WebAPI that gives us all needed information.</p>
+                <li>Spotify WebAPI - <a href="https://developer.spotify.com/documentation/web-api">here</a> - for searching and fetching data straight from Spotify</li>
+                <li>Genius API - <a href="https://docs.genius.com">here</a> - for gathering track lyrics, producers and songwriters</li>
+                <li><b>(Replaced)</b> lyrics.ovh API - <a href="https://lyricsovh.docs.apiary.io/">here</a> - was previously used for gathering track lyrics, now replaced</li>
+                <p><br>Even though we use the official Spotify API, there still are limitations. Find out more <a href="#9">here.</a></p>
+            </div>
+            <div id="answer3" class="faq-answer">
+                <h2>Can I contribute to SpotDB?</h2>
+                <p>Yes, SpotDB is open-source. You can contribute by visiting our <a href="https://github.com/sippedaway/SpotDB">GitHub repository</a>, creating Issues and more. Extremely grateful for all help :)</p>
+            </div>
+            <div id="answer4" class="faq-answer">
+                <h2>Where can I get the source code?</h2>
+                <p>The source code is available in our <a href="https://github.com/sippedaway/SpotDB">GitHub repository!</a></p>
+            </div>
+            <div id="answer5" class="faq-answer">
+                <h2>What language is SpotDB written in?</h2>
+                <p>SpotDB is a vanilla HTML/CSS/Javascript website together with Node.js + Express backend.</p>
+            </div>
+            <div id="answer6" class="faq-answer">
+                <h2>Does SpotDB have an API?</h2>
+                <p>No, we directly fetch Spotify data and if you need that data, you should do that too. The Spotify WebAPI is completely free and easy to get started with, and you will find it <a href="developer.spotify.com/documentation/web-api">here</a>.<br><br>We are an open-source and free-to-use website made by a single Spotify user. We can't just create APIs out of nowhere and maintain them.<br></p>
+            </div>
+            <div id="answer7" class="faq-answer">
+                <h2>Why are there no charts, streams, etc.?</h2>
+                <p>SpotDB directly fetches data straight from Spotify and currently, the Spotify WebAPI does not provide such data. In the long term, we may start using third-party and/or external APIs to get such data, if needed.</p>
+            </div>
+            <div id="answer8" class="faq-answer">
+                <h2>What can I search?</h2>
+                <p>You can pretty much search for everything on Spotify, with one exception.<br><br><b>Albums, tracks (+ EPs), artists, playlists, episodes and shows.</b> To see how to find <b>Spotify users</b> on SpotDB, click <a href="#users">here.</a></p>
+            </div>
+            <div id="answer9" class="faq-answer">
+                <h2>What data is missing?</h2>
+                <p>Even though we are using the official Spotify WebAPI, there are a few stuff that may be missing, or replaced with <a href="#2">different APIs.</a><br></p>
+                <li>Lyrics - the Spotify API does not provide track lyrics, so we rely on the <a href="https://docs.genius.com">Genius API</a></li>
+                <li>Credits - the Spotify API does not provide credits (such as producers, songwriters), so we rely on the <a href="https://docs.genius.com">Genius API</a></li>
+                <li>Users - now, by going to the <a href="/users">Users</a> page, you can fetch user data from Spotify by putting in a Spotify UserID or a Display Name that is unique, if you're lucky. However, <b>you can't Search for users</b>, like you can with with artists, albums and more.</li>
+            </div>
+            <div id="answer10" class="faq-answer">
+                <h2>ID</h2>
+                <p>Each item in Spotify has a unique ID, that looks something like "7mzrIsaAjnXihW3InKjlC3" (a real ID). There cannot be two items with the same ID.</p>
+            </div>
+            <div id="answer11" class="faq-answer">
+                <h2>Copyrights</h2>
+                <p>Copyrights are labels defined by the item's record label, artist or publisher, and represent who owns this item, legally speaking. There's more to this information, such as artists owning the songwriting rights, and more.</p>
+            </div>
+            <div id="answer12" class="faq-answer">
+                <h2>Region (Market)</h2>
+                <p>Most items include "available_markets", which defines where this item can be found. There are multiple releases that are region-locked and can only be found there. This is defined by the item's record label, artist or publisher.</p>
+            </div>
+            <div id="answer13" class="faq-answer">
+                <h2>External IDs</h2>
+                <p>Most items include "external_ids", which are IDs completely unrelated to the <a href="#id">Spotify unique item ID</a>. Examples of these external_ids can be the UPC or ISBN IDs.</p>
+            </div>
+            <div id="answer14" class="faq-answer">
+                <h2>Embed</h2>
+                <p>You can embed Spotify albums, tracks, playlists, artists, episodes and shows, using an <b>iframe embed</b>. On all items <b>excluding users</b> we provide an "Embed" tab that lets you generate these embeds, preview them, and copy the code. You can customize the width and height and use them in your websites, HTML projects, and more.</p>
+            </div>
+            <div id="answer15" class="faq-answer">
+                <h2>The lyrics are wrong!</h2>
+                <p>You're probably right. Once again, we use the <a href="https://docs.genius.com">Genius API</a> to fetch lyrics, songwriters and producers info. Therefore, if there is an issue with lyrics, it is most likely due to Genius. However, if the lyrics are in a completely different language or don't correspond to the track entirely, it is on our side. The Genius API does not directly let you get a track's lyrics, so we use JSDOM to fetch it from the page itself. This could cause several issues, such as some songs being fetched in a different language.<br><br>We apologize if you find these issues, and please <a href="#19">contact us</a> if you do, so we can work to resolve these issues. Thank you!</p>
+            </div>
+            <div id="answer16" class="faq-answer">
+                <h2>You leaked this!</h2>
+                <p>Oh well. Once again, we fetch details from the <a href="https://developer.spotify.com/documentation/web-api">Spotify WebAPI</a>, and if something has been leaked, we are not the ones involved. We control NOTHING, and it is purely the fault of either the Spotify WebAPI or the labels/artists/publishers releasing data wrong or too soon. We are a public platform to fetch data, not intended to find private data...</p>
+            </div>
+            <div id="answer17" class="faq-answer">
+                <h2>Do I have to sign in to use SpotDB?</h2>
+                <p>No, the way SpotDB works is... when you open SpotDB, a Spotify API access token is generated, which is an anonymous token completely defined for you, under the SpotDB API app. REMINDER, we do not see your tokens and data! With it, you can search, fetch data, and more. Completely, without having to sign-in. In fact, we don't even have Spotify sign-in's. Lol.</p>
+            </div>
+            <div id="answer18" class="faq-answer">
+                <h2>Legal</h2>
+                <p>SpotDB is <b>unaffiliated with Spotify</b> and/or the API companies we use. If there's something wrong, please <a href="#19">contact me.</a></p>
+            </div>
+            <div id="answer19" class="faq-answer">
+                <h2>Contact us (feedback, questions, bugs)</h2>
+                <p>SpotDB is a passion project by sipped (<a href="https://github.com/sippedaway">GitHub link</a>), and if you'd like to contact me, please e-mail me at <a href="mailto:hello@sipped.org">hello@sipped.org</a>.</p>
+            </div>
+        </div>
+    </div>
+
+</body>
+
+</html>
