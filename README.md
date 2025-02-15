@@ -8,6 +8,9 @@
 [![GitHub created at](https://img.shields.io/github/created-at/sippedaway/SpotDB)](#)
 [![GitHub last commit](https://img.shields.io/github/last-commit/sippedaway/SpotDB)](#)
 
+
+[![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/K3K31AMKAQ)
+
 # [SpotDB](https://db.sipped.org/)
 SpotDB is a platform that lets you search for Spotify albums, tracks, artists, playlists ([and more](#As-much-information-as-you-probably-need), and gather detailed information about what you searched for. SpotDB is a completely open-source platform that uses the official Spotify [WebAPI](https://developer.spotify.com/documentation/web-api/), as well as additional [third-party APIs](#API) to gather information like track lyrics, writers and more.
 
@@ -109,3 +112,5 @@ Alternatively, leave a GitHub issue. Thanks! :)
 
 ## Credits
 - [sipped](https://github.com/sippedaway)
+
+Support me and get early access to SpotDB (and all my other projects) updates, changes and early looks __for as low as $3__: https://ko-fi.com/sipped
