@@ -95,12 +95,18 @@ G. Episode:
 And probably more I missed...
 
 ## Version
+#### 1.1
+- **Release date**: 2025-03-12
+- **Added:**
+- Basic SEO for all pages
+- Default dark theme
+- Notes, minor UI issues
+- **Fixed:**
+- FAQ page navbar SpotDB logo not loading
+- Lyrics fetching on tracks and singles
 #### 1.0
 - **Release date**: 2025-02-08
-- Hosted on Vercel + GitHub Pages
-- Base release
-- Basic mobile device support
-- Most likely unfound bugs and issues
+- Hosted on Vercel
 
 ## Legal
 SpotDB is a passion/hobby project made by [me, sipped,](https://github.com/sippedaway) and is **NOT affiliated with Spotify** in any way whatsoever.
