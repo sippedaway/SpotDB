@@ -300,7 +300,10 @@ function convertToLocalTime(isoString) {
 
 async function populateAlbumPage(data) {
     pagename = `${data.name} | SpotDB`;
+    pgdescription = `All information about ${data.name} by ${data.artists?.[0].name} on SpotDB`;
     document.title = pagename;
+    document.querySelector('meta[property="og:title"]').setAttribute("content", pagename);
+    document.querySelector('meta[property="og:description"]').setAttribute("content", pgdescription);
 
     const albumContainer = document.createElement('div');
 
@@ -473,7 +476,7 @@ async function createLyricsTab(data) {
         if (data === undefined) {
             lyricsTab.innerHTML = `<h3>Lyrics</h3><p>This release either doesn't have lyrics - or this release has more than one song. Click on an individual track to see its lyrics.</p>`
         } else {
-            lyricsTab.innerHTML = `<h3>Lyrics</h3><p style="white-space: pre; max-width: 20ch; overflow-wrap: break-word;">${formattedLyrics}</p><p><b>Source:</b> Genius</p>`;
+            lyricsTab.innerHTML = `<h3>Lyrics</h3><p style="white-space: pre; max-width: 20ch; overflow-wrap: break-word;">${formattedLyrics}</p><p><b>Source:</b> Genius<br>What is shown may completely not be the lyrics due to API issues. Sorry!</p>`;
         }
     } catch (error) {
         lyricsTab.innerHTML = `<h3>Lyrics</h3><p>This release either doesn't have lyrics - or this release has more than one song. Click on an individual track to see its lyrics.</p>`
@@ -770,7 +773,10 @@ function createEmbedTab(data, ln) {
 
 async function populateArtistPage(data) {
     pagename = `${data.name} | SpotDB`;
+    pgdescription = `All information about ${data.name} by ${data.artists?.[0].name} on SpotDB`;
     document.title = pagename;
+    document.querySelector('meta[property="og:title"]').setAttribute("content", pagename);
+    document.querySelector('meta[property="og:description"]').setAttribute("content", pgdescription);
 
     const buttonRow = document.createElement('div');
     buttonRow.classList.add('button-row');
@@ -981,7 +987,10 @@ async function createArtistSinglesTab(albumData) {
 
 async function populateTrackPage(data) {
     pagename = `${data.name} | SpotDB`;
+    pgdescription = `All information about ${data.name} by ${data.artists?.[0].name} on SpotDB`;
     document.title = pagename;
+    document.querySelector('meta[property="og:title"]').setAttribute("content", pagename);
+    document.querySelector('meta[property="og:description"]').setAttribute("content", pgdescription);
 
     const albumContainer = document.createElement('div');
 
@@ -1114,10 +1123,10 @@ async function createCreditsTab(data) {
       } else {
         creditsTab.innerHTML = `<h3>Credits</h3>
           <p>
-            <b>Producers:</b> ${credits.producers.join(", ")}<br>
-            <b>Songwriters:</b> ${credits.songwriters.join(", ")}
-            <br><br>
-            <b>Source:</b> Genius
+            ${credits.producers?.length && credits.producers.some(p => p !== "") ? `<b>Producers:</b> ${credits.producers.join(", ")}<br>` : ""}
+            ${credits.songwriters?.length && credits.songwriters.some(s => s !== "") ? `<b>Songwriters:</b> ${credits.songwriters.join(", ")}` : ""}
+            <br>
+            ${(!credits.producers?.length || !credits.producers.some(p => p !== "")) && (!credits.songwriters?.length || !credits.songwriters.some(s => s !== "")) ? "No credits found" : `<br><br><b>Source:</b> Genius`}
           </p>`;
       }
     } catch (error) {
@@ -1209,7 +1218,10 @@ async function createAlbumsTab(data) {
 
 async function populatePlaylistPage(data) {
     pagename = `${data.name} | SpotDB`;
+    pgdescription = `All information about ${data.name} by ${data.artists?.[0].name} on SpotDB`;
     document.title = pagename;
+    document.querySelector('meta[property="og:title"]').setAttribute("content", pagename);
+    document.querySelector('meta[property="og:description"]').setAttribute("content", pgdescription);
 
     const albumContainer = document.createElement('div');
 
@@ -1414,8 +1426,11 @@ async function createCreatorsTab(data, artistdata) {
 ////////////////////////////////////////////////////////////////////// USER //////////////////////////////////////////////////////////////////////
 
 async function populateUserPage(data) {
-    pagename = `${data.display_name} | SpotDB`;
+    pagename = `${data.name} | SpotDB`;
+    pgdescription = `All information about ${data.name} by ${data.artists?.[0].name} on SpotDB`;
     document.title = pagename;
+    document.querySelector('meta[property="og:title"]').setAttribute("content", pagename);
+    document.querySelector('meta[property="og:description"]').setAttribute("content", pgdescription);
 
     const albumContainer = document.createElement('div');
 
@@ -1565,7 +1580,10 @@ async function createUserPlaylistsTab(user) {
 
 async function populateEpisodesPage(data) {
     pagename = `${data.name} | SpotDB`;
+    pgdescription = `All information about ${data.name} by ${data.artists?.[0].name} on SpotDB`;
     document.title = pagename;
+    document.querySelector('meta[property="og:title"]').setAttribute("content", pagename);
+    document.querySelector('meta[property="og:description"]').setAttribute("content", pgdescription);
 
     const albumContainer = document.createElement('div');
 
@@ -1721,7 +1739,10 @@ async function createDescriptionTab(data) {
 
 async function populateShowPage(data) {
     pagename = `${data.name} | SpotDB`;
+    pgdescription = `All information about ${data.name} by ${data.artists?.[0].name} on SpotDB`;
     document.title = pagename;
+    document.querySelector('meta[property="og:title"]').setAttribute("content", pagename);
+    document.querySelector('meta[property="og:description"]').setAttribute("content", pgdescription);
 
     const albumContainer = document.createElement('div');
 

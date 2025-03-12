@@ -35,8 +35,10 @@ function toggleDarkMode() {
 
 if (localStorage.getItem('darkMode') === 'true') {
     document.body.classList.add('dark-mode');
-} else {
+} else if (localStorage.getItem('darkMode') === 'false'){
     document.body.classList.remove('dark-mode');
+} else {
+    toggleDarkMode();
 }
 
 document.addEventListener("DOMContentLoaded", function () {
