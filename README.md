@@ -103,7 +103,7 @@ And probably more I missed...
 - Notes, minor UI issues
 - **Fixed:**
 - FAQ page navbar SpotDB logo not loading
-- Lyrics fetching on tracks and singles
+- ~~Lyrics fetching on tracks and singles~~
 #### 1.0
 - **Release date**: 2025-02-08
 - Hosted on Vercel
