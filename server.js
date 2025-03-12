@@ -11,7 +11,7 @@ const port = process.env.PORT || 3000;
 const SPOTIFY_API_URL = 'https://api.spotify.com/v1';
 const CLIENT_ID = process.env.CLIENT_ID;
 const CLIENT_SECRET = process.env.CLIENT_SECRET;
-const REDIRECT_URI = 'http://localhost:3000/callback';
+const REDIRECT_URI = 'https://db.sipped.org/auth/callback';
 
 const GENIUS_API_URL = "https://api.genius.com";
 const GENIUS_ACCESS_TOKEN = process.env.GENIUS_ACCESS_TOKEN;
