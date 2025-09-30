@@ -1,4 +1,4 @@
-![db.sipped.org header](https://raw.githubusercontent.com/sippedaway/SpotDB/refs/heads/main/github/SpotDB.png)
+![db.sipped.org header](https://raw.githubusercontent.com/sippedaway/SpotDB/refs/heads/main/github/spotdb_preview.png)
 
 [![HTML](https://img.shields.io/badge/HTML-%23E34F26.svg?logo=html5&logoColor=white)](#)
 [![CSS](https://img.shields.io/badge/CSS-1572B6?logo=css3&logoColor=fff)](#)
@@ -30,71 +30,27 @@ SpotDB uses **APIs** to gather information for what you're looking for. Here's a
 However, Spotify's API is still kinda limited. For instance, **user profiles can't be searched**. SpotDB supports fetching user's **public** profile/data anyway, and we plan to do so, however the search bars will not find you user profiles. To get a user's profile, you'll need to go to db.sipped.org/**r/{a user ID}**. The User ID can be found by going on Spotify, finding the profile and copying the ID from the URL or by clicking Share. The unavailability might soon change, as we're working on a permanent solution.
 
 ## As much information as you probably need
-The information you find depends on what you look for, so here's a detailed overview, that may change very soon
-
-A. Shared information, found everywhere
-- Name, Spotify URL, Spotify Mobile/PC App URI, type, ID
-- Media, images in various sizes fetched from Spotify's [API](#API)
-
-B. Artist:
-- Genres
-- Popularity score
-- Followers
-- Discography, Albums, Singles & EPs
-
-C. Release:
-Includes **albums, singles, EPs...**
-- Genres, release date, label, copyrights
-- Artists
-- Tracklist
-- Lyrics (if the release is a Single / lyrics are shared)
-- Regions / markets
-- External IDs (usually include ISBN / UPC IDs)
-
-D. Track:
-- Duration
-- Credits
-- Popularity score
-- Rating (clean/explicit)
-- Release date
-- Artists
-- Album/release the track is found on
-- Lyrics
-- Regions
-- External IDs
-- More by artist (artist recent discography)
-
-E. User-made playlist:
-- Followers
-- Primary color
-- Public?
-- Collaborative?
-- Playlist tracklist
-- Creator
-
-F. Show:
-- Publisher
-- Language(s)
-- Total episodes + episodes list
-- Rating (clean/explicit)
-- Is externally hosted?
-- Is playable?
-- Description (description + html_description variables)
-- Regions
-
-G. Episode:
-- Language
-- Rating (clean/explicit)
-- Release date
-- Duration
-- Is externally hosted?
-- Is playable?
-- Show the episode is found on
-- Description (description + html_description variables)
-
-And probably more I missed...
+The information you find depends on what you look for, but overall it is **EVERYTHING Spotify stores** in their public API!
 
 ## Version
+#### 1.2
+- **Release date**: 2025-09-30
+- **Overall:**
+- Design is more consistent
+- Everything is better looking
+- New functions and ALL information possible that use the API to its fullest
+- Better to look at, and easier to find anything you want
+- Lots and lots of bug, QOL fixes, and new FAQ info
+- **Completely revamped Release page:**
+- Prettier, more and ALL information, fixes, aesthetical changes, and new functions!
+- **New and improved search (home page):**
+- Top results look better
+- More entries, prettier, and css fixes
+- **Uhh what else**
+- Mobile might be bad but promise to do allat later
+- The creator now listens to more indie artists (lol)
+- Oh yeah more snappy animations, more consistency overall, and just way better
+- I really like this update lol go check it out
 #### 1.1
 - **Release date**: 2025-03-12
 - **Added:**
