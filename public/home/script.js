@@ -91,7 +91,7 @@ document.addEventListener("DOMContentLoaded", function () {
     marketSelect.addEventListener('change', function () {
         setCookie('market', marketSelect.value, 7);
     });
-    
+
     limitInput.addEventListener('input', function () {
         setCookie('limit', limitInput.value, 7);
     });
@@ -99,7 +99,7 @@ document.addEventListener("DOMContentLoaded", function () {
     function createTabs() {
         tabsContainer.innerHTML = "";
         tabsContainer.classList.add('tabs-container');
-    
+
         filters.forEach(filter => {
             const button = document.createElement("button");
             button.textContent = filter;
@@ -113,11 +113,10 @@ document.addEventListener("DOMContentLoaded", function () {
             });
             tabsContainer.appendChild(button);
         });
-    
+
         resultsContainer.innerHTML = "";
         resultsContainer.appendChild(tabsContainer);
     }
-    
 
     let searchResults = { albums: [], tracks: [], artists: [], playlists: [], episodes: [], shows: [] };
 
@@ -152,93 +151,111 @@ document.addEventListener("DOMContentLoaded", function () {
     function updateResults() {
         resultsContainer.innerHTML = "";
         resultsContainer.appendChild(tabsContainer);
-    
+
         if (activeFilter === "All") {
             const topResults = ['albums', 'tracks', 'artists']
                 .map(type => searchResults[type].length > 0 ? getTopResult(searchResults[type]) : null)
                 .filter(item => item !== null);
-    
+
             if (topResults.length > 0) {
                 const topResultsSection = document.createElement('div');
                 topResultsSection.classList.add('results-category');
                 topResultsSection.innerHTML = `<h2>Top Results</h2>`;
                 const topResultsGrid = document.createElement('div');
                 topResultsGrid.classList.add('grid');
-    
+
                 topResults.forEach(item => {
                     const topResultItem = document.createElement('div');
                     topResultItem.classList.add('search-item');
+                    topResultItem.classList.add('top-result');
                     topResultItem.addEventListener('click', function() {
                         window.location.href = `/r/${item.id}`;
                     });
-    
+
+                    let explicitTag = '';
+                    if (item.type === 'track' && item.explicit) {
+                        explicitTag = '<span class="explicit-tag">E</span>';
+                    }
+
+                    console.log(item);
                     topResultItem.innerHTML = `
-                        <img src="${item.cover || item.icon}" alt="${item.name}">
-                        <div class="content">
-                            <div class="name">${item.name}</div>
-                            ${item.artists ? `<div class="artists">${item.artists.join(', ')}</div>` : ''}
-                            <div class="type">${item.type.charAt(0).toUpperCase() + item.type.slice(1)}</div>
+                        <div class="top-result-div">
+                            <img src="${item.cover || item.icon}" alt="${item.name}">
+                            <div class="content" style="text-align: left;">
+                                <div class="name">${item.name.length > 20 ? item.name.substring(0, 30) + '…' : item.name} ${explicitTag}</div>
+                                ${item.artists ? `<div class="artists">${item.artists.join(', ').length > 20 
+    ? item.artists.join(', ').substring(0, 20) + '…' 
+    : item.artists.join(', ')}</div>` : ''}
+                                <div class="type">${item.type.charAt(0).toUpperCase() + item.type.slice(1)}</div>
+                            </div>
                         </div>
                     `;
                     topResultsGrid.appendChild(topResultItem);
                 });
-    
+
                 topResultsSection.appendChild(topResultsGrid);
                 resultsContainer.appendChild(topResultsSection);
             }
         }
-    
+
         ['albums', 'tracks', 'artists', 'playlists', 'episodes', 'shows'].forEach(type => {
             if (activeFilter === "All" || activeFilter.toLowerCase() === type) {
                 appendResults(type, searchResults[type]);
             }
         });
     }    
-    
 
     function appendResults(type, items) {
         const category = document.createElement('div');
         category.classList.add('results-category');
-    
+
         const categoryTitle = document.createElement('h2');
         categoryTitle.textContent = type.charAt(0).toUpperCase() + type.slice(1);
         category.appendChild(categoryTitle);
-    
+
         if (items.length > 0) {
             const grid = document.createElement('div');
             grid.classList.add('grid');
-    
+
             items.forEach(item => {
                 const searchItem = document.createElement('div');
                 searchItem.classList.add('search-item');
-                searchItem.addEventListener('click', function() {
-                    window.location.href = `/r/${item.id}`;
-                });
-    
+
                 let explicitTag = '';
                 if (item.type === 'track' && item.explicit) {
                     explicitTag = '<span class="explicit-tag">E</span>';
                 }
 
-                searchItem.innerHTML = `
-                    <img src="${item.cover || item.icon}" alt="${item.name}">
+                const imgUrl = item.cover || item.icon;
+                searchItem.innerHTML += `
+                    <img src="${imgUrl}" alt="${item.name}">
                     <div class="content">
-                        <div class="name">${item.name} ${explicitTag}</div>
-                        ${item.artists ? `<div class="artists">${item.artists.join(', ')}</div>` : ''}
-                        <div class="type">${item.type.charAt(0).toUpperCase() + item.type.slice(1)}</div>
+                        <div class="name" title="${item.name}">${item.name.length > 20 ? item.name.substring(0, 30) + '…' : item.name} ${explicitTag}</div>
+                        ${item.artists ? `<div class="artists" title="${item.artists.join(', ')}">
+  ${item.artists.join(', ').length > 50 
+    ? item.artists.join(', ').substring(0, 50) + '…' 
+    : item.artists.join(', ')}
+</div>
+` : ''}
+
                     </div>
+                    <div class="type">${item.type.charAt(0).toUpperCase() + item.type.slice(1)}</div>
                 `;
-    
+
+                searchItem.addEventListener('click', () => {
+                    window.location.href = `/r/${item.id}`;
+                });
+
                 grid.appendChild(searchItem);
             });
-    
+
             category.appendChild(grid);
         } else {
             const noResultsMessage = document.createElement('h4');
             noResultsMessage.textContent = `No ${type.charAt(0).toUpperCase() + type.slice(1)} found`;
             category.appendChild(noResultsMessage);
         }
-    
+
         resultsContainer.appendChild(category);
     }
 

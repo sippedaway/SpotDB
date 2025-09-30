@@ -28,8 +28,6 @@ body {
     font-family: 'Neue Haas Grotesk', sans-serif;
     margin: 0;
     padding: 0;
-
-    transition: all 0.3s ease;
 }
 
 ::-webkit-scrollbar {
@@ -62,7 +60,7 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background-color: #181818;
+    background: linear-gradient(to bottom, #181818 0%, transparent 100%);
     padding: 8px 17px;
     color: white;
     width: 100%;
@@ -152,18 +150,20 @@ body {
 
 .findusers-button {
     width: 100%;
-    border: 1px solid #ccc;
+    border: 1px solid transparent;
     margin-top: 30%;
     font-size: 14px;
     padding: 5px;
     border-radius: 5px;
-
     cursor: pointer;
-    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
 }
 
 .findusers-button:hover {
-    scale: 1.1;
+    border: 1px solid white;
 }
 
 .nav-search-bar {
@@ -228,7 +228,7 @@ body {
 }
 
 .page {
-    max-width: 1200px;
+    width: 80vw;
     margin: 6% auto;
     padding: 20px;
 }
@@ -255,6 +255,10 @@ body {
     border-radius: 12px;
     cursor: pointer;
     transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
 }
 
 #search-btn:hover {
@@ -268,13 +272,60 @@ body {
 .search-results-wrapper {
     display: flex;
     gap: 20px;
+    position: relative;
+}
+
+body.dark-mode .search-item::before {
+    background: unset;
+}
+
+.search-item::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: darkslategray;
+    z-index: -1;
+}
+
+.search-item::after {
+    content: '';
+    position: absolute;
+    inset: -5px;
+    background-image: var(--item-bg);
+    background-size: cover;
+    background-position: center;
+    filter: blur(8px);
+    opacity: 0.3;
+    z-index: -2;
+}
+
+.search-item .name {
+    font-size: 11px;
+    font-weight: bold;
+    margin-top: 10px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.search-item .artists {
+    font-size: 12px;
+    color: #666;
+    margin-top: 5px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .filters {
-    width: 10%;
-    background-color: none;
-    padding: 20px;
-    border-radius: 8px;
+    width: 20%;
+    border: 1px solid darkslategray;
+    padding: 30px;
+    border-radius: 40px;
+    max-height: 300px;
 }
 
 .filters select, .filters input {
@@ -297,9 +348,11 @@ body {
 }
 
 .results-container {
-    width: 70%;
+    padding: 20px;
+    width: 100%;
     display: flex;
     flex-direction: column;
+    border-radius: 20px;
     gap: 20px;
 }
 
@@ -314,7 +367,7 @@ body {
 
 .grid {
     display: grid;
-    grid-template-columns: repeat(5, 1fr);
+    grid-template-columns: repeat(6, 1fr);
     gap: 20px;
 }
 
@@ -328,28 +381,43 @@ body {
     padding: 6px;
     transition: transform 0.3s ease, box-shadow 0.3s ease;
     cursor: pointer;
+    border: 0.5px solid transparent;
+    width: 130px;
+}
+
+.top-result {
+    display: flex;
+    width: 15vw;
+    height: 95px;
+    justify-content: center;
+}
+
+.top-result-div {
+    display: flex;
+    align-items: center;
+    gap: 20px;
 }
 
 .search-item:hover {
-    transform: scale(1.05);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    border: 0.5px solid white;
 }
 
 .search-item img {
-    width: 90px;
-    height: 90px;
+    width: 120px;
+    height: 120px;
     object-fit: cover;
     border-radius: 5px;
     aspect-ratio: 1;
+    margin-top: 3px;
 }
 
 .search-item .content {
+    width: 90%;
     flex-grow: 1;
-    text-align: center;
 }
 
 .search-item .name {
-    font-size: 11px;
+    font-size: 13px;
     font-weight: bold;
     margin-top: 10px;
     white-space: nowrap;
@@ -364,13 +432,35 @@ body {
 }
 
 .search-item .type {
-    font-size: 10px;
+    font-size: 12px;
     color: #999;
     margin-top: 5px;
 }
 
+.content .type {
+    border: 1px solid #999;
+    color: #999;
+    padding: 5px 7px;
+    width: 34px;
+    border-radius: 15px;
+    font-size: 12px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.top-result-div .content .name {
+    font-size: 14px;
+} 
+
+.top-result-div img {
+    width: 90px;
+    height: 90px;
+    margin-top: 0;
+}
+
 .search-item .content .name,
-.search-item .content .artists {
+search-item .content .artists {
     display: -webkit-box;
     -webkit-box-orient: vertical;
     overflow: hidden;
@@ -405,26 +495,23 @@ body {
 
 .tabs-container {
     display: flex;
-    justify-content: center;
     gap: 10px;
     padding: 10px 0;
     background: transparent;
 }
 
 .tab-btn {
-    background-color: #555;
+    background-color: #1a1a1a;
     color: white;
-    border: none;
+    border: 1px solid transparent;
     padding: 8px 16px;
     font-size: 14px;
     cursor: pointer;
     border-radius: 20px;
-    transition: all 0.3s ease;
 }
 
 .tab-btn:hover {
-    background: #444;
-    scale: 1.1;
+    border: 1px solid white;
 }
 
 .tab-btn.active {
@@ -560,6 +647,10 @@ body {
         color: white;
         cursor: pointer;
         border: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
     }
 
     .filters {
@@ -621,6 +712,7 @@ body {
 
     .search-results-wrapper {
         display: flex;
+        width: 90vw;
         flex-direction: column;
         align-items: center;
         gap: 20px;
@@ -649,7 +741,7 @@ body {
     }
 }
 
-/* DARK MODE */ /* DARK MODE */ /* DARK MODE */ /* DARK MODE */ /* DARK MODE */ /* DARK MODE */ /* DARK MODE */ /* DARK MODE */ /* DARK MODE */ /* DARK MODE */ /* DARK MODE */ /* DARK MODE */ /* DARK MODE */ 
+             
 
 body.dark-mode {
     background-color: #2a2a2a;
@@ -699,9 +791,6 @@ body.dark-mode .secondary-buttons button {
 body.dark-mode .secondary-buttons button:hover {
     background-color: #404040;
 }
-
-
-/* keep last */
 
 #nav-search-input {
     background: #282828;
