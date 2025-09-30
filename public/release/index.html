@@ -8,7 +8,7 @@
 
     <meta name="description" content="Loading...">
     <meta property="og:title" content="SpotDB">
-    <meta property="og:keywords" content="spotify, spotdb, api, webapi, lyrics, genius, open-source, sipped, contact, questions, faq">
+    <meta property="og:keywords" content="spotify, spotdb, api, webapi, open-source, sipped, contact, questions, faq">
     <meta property="og:description" content="Loading...">
     <meta property="og:image" content="ttps://raw.githubusercontent.com/sippedaway/SpotDB/refs/heads/main/public/spotdb/SpotDB_White.png">
     <meta property="og:url" content="https://db.sipped.org">
@@ -48,8 +48,6 @@
 
     <div class="container">
         <div class="main-content">
-            <div class="top-section">
-            </div>
             <div class="container">
                 <div class="menu">
                 </div>
@@ -61,11 +59,15 @@
 
     <div id="imageModal" class="modal">
         <div class="modal-content">
+            <div>
+                <h1>Image preview</h1>
+                <p>Download or copy the original size image</p>
+            </div> 
             <img id="modalImage" src="" alt="Full-size image">
             <div class="modal-actions">
-                <button class="button" id="saveImage">Save Image</button>
-                <button class="button" id="copyImage">Copy Image URL</button>
-                <button class="button" id="closeModal">Close</button>
+                <button class="button sici" id="saveImage"><i class="fas fa-download" style="margin-right: 10px;"></i>Save Image</button>
+                <button class="button sici" id="copyImage"><i class="fas fa-copy" style="margin-right: 10px;"></i>Copy Image URL</button>
+                <button class="button sici" id="closeModal"><i class="fas fa-close" style="margin-right: 10px;"></i>Close</button>
             </div>
         </div>
     </div>
