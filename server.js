@@ -3,18 +3,14 @@ const path = require('path');
 const fetch = require('node-fetch');
 const fs = require('fs');
 const axios = require('axios');
-const { JSDOM } = require('jsdom');
 
 const app = express();
 const port = process.env.PORT || 3000;
 
 const SPOTIFY_API_URL = 'https://api.spotify.com/v1';
-const CLIENT_ID = process.env.CLIENT_ID;
-const CLIENT_SECRET = process.env.CLIENT_SECRET;
+const CLIENT_ID = "40067b0e7aad479a85d272a15a98bce2"; // process.env.CLIENT_ID;
+const CLIENT_SECRET = "69e79accc4764b8d9b4f0908e4ab442e"; // process.env.CLIENT_SECRET;
 const REDIRECT_URI = 'https://db.sipped.org/auth/callback';
-
-const GENIUS_API_URL = "https://api.genius.com";
-const GENIUS_ACCESS_TOKEN = process.env.GENIUS_ACCESS_TOKEN;
 
 let accessToken = '';
 
