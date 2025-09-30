@@ -8,8 +8,8 @@ const app = express();
 const port = process.env.PORT || 3000;
 
 const SPOTIFY_API_URL = 'https://api.spotify.com/v1';
-const CLIENT_ID = "40067b0e7aad479a85d272a15a98bce2"; // process.env.CLIENT_ID;
-const CLIENT_SECRET = "69e79accc4764b8d9b4f0908e4ab442e"; // process.env.CLIENT_SECRET;
+const CLIENT_ID = process.env.CLIENT_ID; //i planned to troll by posting a fake api but then i actually left my real one, yeah im THAT stupid i hate using envs locally </3 mb gangalang 
+const CLIENT_SECRET = process.env.CLIENT_SECRET;
 const REDIRECT_URI = 'https://db.sipped.org/auth/callback';
 
 let accessToken = '';
@@ -414,3 +414,4 @@ module.exports = app;
 app.listen(port, () => {
     console.log(`Server is running on http://localhost:${port}`);
 });
+
