@@ -23,9 +23,7 @@ The Search that is quickly available through the Home page gathers <b>tracks, al
 [<kbd> <br> Click here for a detailed overview of SpotDB and questions <br> </kbd>](https://db.sipped.org/faq)
 
 ## API
-SpotDB uses **APIs** to gather information for what you're looking for. Here's all APIs that we (currently) use!
-- Official Spotify WebAPI ([here](https://developer.spotify.com/documentation/web-api/)) for all data
-- Genius API ([here](https://docs.genius.com)) for track lyrics, songwriting and producer credits
+SpotDB uses **the official Spotify WebAPI** to gather all public information for any Spotify entry item!
 
 However, Spotify's API is still kinda limited. For instance, **user profiles can't be searched**. SpotDB supports fetching user's **public** profile/data anyway, and we plan to do so, however the search bars will not find you user profiles. To get a user's profile, you'll need to go to db.sipped.org/**r/{a user ID}**. The User ID can be found by going on Spotify, finding the profile and copying the ID from the URL or by clicking Share. The unavailability might soon change, as we're working on a permanent solution.
 
@@ -48,7 +46,7 @@ The information you find depends on what you look for, but overall it is **EVERY
 - More entries, prettier, and css fixes
 - **Uhh what else**
 - Mobile might be bad but promise to do allat later
-- The creator now listens to more indie artists (lol)
+- The creator now listens to more indie artists ([lol](https://db.sipped.org/r/1JqSKahgRfnmk4rw82BBTL)
 - Oh yeah more snappy animations, more consistency overall, and just way better
 - I really like this update lol go check it out
 #### 1.1
