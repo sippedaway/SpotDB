@@ -2,7 +2,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background-color: #181818;
+    background: linear-gradient(to bottom, #181818 0%, transparent 100%);
     padding: 8px 17px;
     color: white;
     width: 100%;
