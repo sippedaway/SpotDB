@@ -31,6 +31,10 @@ However, Spotify's API is still kinda limited. For instance, **user profiles can
 The information you find depends on what you look for, but overall it is **EVERYTHING Spotify stores** in their public API!
 
 ## Version
+#### 1.3
+- **Not out, just leavin notes for myself**
+- Alright fattie make sure to finally implement /me/ calls to find out top 5 and wtvr with a sign in to spotify button [doc](https://developer.spotify.com/documentation/web-api)
+- ok bye lyall
 #### 1.2
 - **Release date**: 2025-09-30
 - **Overall:**
