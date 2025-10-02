@@ -32,10 +32,18 @@ The information you find depends on what you look for, but overall it is **EVERY
 
 ## Version
 #### 1.3
-- **Not out, just leavin notes for myself**
-- Alright fattie make sure to finally implement /me/ calls to find out top 5 and wtvr with a sign in to spotify button [doc](https://developer.spotify.com/documentation/web-api)
-- ok bye lyall
-#### 1.2
+- **Release date**: 2025-10-02
+- **(Optional) Signing in with Spotify:**
+- New __"You"__ page with all your Spotify user information:
+- Top tracks, top artists, followed artists, etc!
+- Follow artists and users within SpotDB
+- **Fixes and global improvements:**
+- Fixed color issues with the light theme home page
+- Reimagined home page
+- "Fingers crossed" mobile support on all pages
+- Updated, better navigation bar on all pages
+- **Coming soon:** saving playlists, tracks, shows, etc; player/playback!
+#### 1.2 
 - **Release date**: 2025-09-30
 - **Overall:**
 - Design is more consistent
