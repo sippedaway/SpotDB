@@ -3,16 +3,21 @@ const path = require('path');
 const fetch = require('node-fetch');
 const fs = require('fs');
 const axios = require('axios');
+require('dotenv').config();
 
 const app = express();
 const port = process.env.PORT || 3000;
 
+const SPOTIFY_AUTH_URL = 'https://accounts.spotify.com/authorize';
+const SPOTIFY_TOKEN_URL = 'https://accounts.spotify.com/api/token';
+
 const SPOTIFY_API_URL = 'https://api.spotify.com/v1';
-const CLIENT_ID = process.env.CLIENT_ID; //i planned to troll by posting a fake api but then i actually left my real one, yeah im THAT stupid i hate using envs locally </3 mb gangalang 
+const CLIENT_ID = process.env.CLIENT_ID;
 const CLIENT_SECRET = process.env.CLIENT_SECRET;
-const REDIRECT_URI = 'https://db.sipped.org/auth/callback';
+const REDIRECT_URI = 'http://localhost:3000/auth/callback';
 
 let accessToken = '';
+let you_accesstoken = '';
 
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'home', 'home.html'));
@@ -28,6 +33,10 @@ app.get('/faq', (req, res) => {
 
 app.get('/q', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'home', 'home.html'));
+});
+
+app.get('/you', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'you', 'you.html'));
 });
 
 app.get('/r', (req, res) => {
@@ -54,50 +63,303 @@ async function getAccessToken() {
     accessToken = data.access_token;
 }
 
-app.get("/api/genius/lyrics", async (req, res) => {
-    const { track, artist } = req.query;
+app.get('/auth/login', (req, res) => {
+    const scope = 'user-read-private user-read-email user-top-read user-follow-read user-follow-modify playlist-modify-public playlist-modify-private';
+    res.redirect(SPOTIFY_AUTH_URL + 
+        '?response_type=code' +
+        '&client_id=' + CLIENT_ID +
+        '&scope=' + encodeURIComponent(scope) +
+        '&redirect_uri=' + encodeURIComponent(REDIRECT_URI));
+});
 
-    if (!track || !artist) {
-        return res.status(400).json({ error: "Track and artist are required" });
+app.get('/auth/callback', async (req, res) => {
+    const code = req.query.code || null;
+
+    try {
+        const response = await fetch(SPOTIFY_TOKEN_URL, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'Authorization': 'Basic ' + Buffer.from(CLIENT_ID + ':' + CLIENT_SECRET).toString('base64')
+            },
+            body: new URLSearchParams({
+                code: code,
+                redirect_uri: REDIRECT_URI,
+                grant_type: 'authorization_code'
+            })
+        });
+
+        const data = await response.json();
+        
+        you_accesstoken = data.access_token;
+
+        res.redirect('/you');
+    } catch (error) {
+        res.redirect('/lmfao');
+    }
+});
+
+app.get('/api/me', async (req, res) => {
+    const token = you_accesstoken;
+    
+    if (!token) {
+        return res.status(401).json({ error: 'No token provided' });
     }
 
     try {
-        const searchUrl = `${GENIUS_API_URL}/search?q=${encodeURIComponent(track + " " + artist)}`;
-        const searchResponse = await axios.get(searchUrl, {
-            headers: { Authorization: `Bearer ${GENIUS_ACCESS_TOKEN}` },
+        const response = await fetch('https://api.spotify.com/v1/me', {
+            headers: { 'Authorization': `Bearer ${token}` }
         });
-
-        if (!searchResponse.data.response.hits.length) {
-            return res.status(404).json({ error: "Lyrics not found" });
-        }
-
-        const song = searchResponse.data.response.hits[0].result;
-        const lyricsUrl = song.url;
-
-        const lyricsPage = await axios.get(lyricsUrl);
-        const dom = new JSDOM(lyricsPage.data);
-        const lyricsElements = dom.window.document.querySelectorAll("[data-lyrics-container]");
-
-        if (!lyricsElements.length) {
-            return res.status(404).json({ error: "Lyrics not found on the page" });
-        }
-
-        const lyrics = Array.from(lyricsElements)
-            .map(el => {
-                let html = el.innerHTML;
-                html = html.replace(/<br\s*\/?>/gi, "\n");
-                html = html.replace(/<[^>]+>/g, "");
-                return html.trim();
-            })
-            .join("\n");
-
-        res.setHeader("Content-Type", "text/plain; charset=utf-8");
-        res.send(lyrics);
-
+        
+        const data = await response.json();
+        res.json(data);
     } catch (error) {
-        console.error("Error fetching lyrics:", error.message);
-        res.status(500).json({ error: "Internal Server Error" });
+        res.status(401).json({ error: 'Failed to fetch user data' });
     }
+});
+
+app.get('/api/me/followed', async (req, res) => {
+    const token = you_accesstoken;
+    const limit = Math.min(Math.max(parseInt(req.query.limit) || 10, 1), 50);
+    
+    if (!token) {
+        return res.status(401).json({ error: 'No token provided' });
+    }
+
+    try {
+        const response = await fetch(`https://api.spotify.com/v1/me/following?type=artist&limit=${limit}`, {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        
+        const data = await response.json();
+        res.json(data);
+    } catch (error) {
+        res.status(401).json({ error: 'Failed to fetch user followed artists' });
+    }
+});
+
+app.get('/api/me/top-artists', async (req, res) => {
+    const token = you_accesstoken;
+    const timeRange = req.query.time_range || 'medium_term';
+    const limit = Math.min(Math.max(parseInt(req.query.limit) || 10, 1), 50);
+    
+    if (!token) {
+        return res.status(401).json({ error: 'No token provided' });
+    }
+
+    try {
+        const response = await fetch(`https://api.spotify.com/v1/me/top/artists?time_range=${timeRange}&limit=${limit}`, {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        
+        const data = await response.json();
+        res.json(data);
+    } catch (error) {
+        res.status(401).json({ error: 'Failed to fetch user top artists' });
+    }
+});
+
+app.get('/api/me/top-tracks', async (req, res) => {
+    const token = you_accesstoken;
+    const timeRange = req.query.time_range || 'medium_term';
+    const limit = Math.min(Math.max(parseInt(req.query.limit) || 10, 1), 50);
+    
+    if (!token) {
+        return res.status(401).json({ error: 'No token provided' });
+    }
+
+    try {
+        const response = await fetch(`https://api.spotify.com/v1/me/top/tracks?time_range=${timeRange}&limit=${limit}`, {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        
+        const data = await response.json();
+        res.json(data);
+    } catch (error) {
+        res.status(401).json({ error: 'Failed to fetch user top tracks' });
+    }
+});
+
+app.get('/api/me/following', async (req, res) => {
+    const token = you_accesstoken;
+    
+    if (!token) {
+        return res.status(401).json({ error: 'No token provided' });
+    }
+
+    try {
+        const response = await fetch('https://api.spotify.com/v1/me/following?type=artist&limit=50', {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        
+        const data = await response.json();
+        res.json(data);
+    } catch (error) {
+        res.status(401).json({ error: 'Failed to fetch followed artists' });
+    }
+});
+
+app.put('/api/follow/:type/:id', async (req, res) => {
+    const token = you_accesstoken;
+    const { type, id } = req.params;
+    
+    if (!token) {
+        return res.status(401).json({ error: 'Not authenticated' });
+    }
+
+    try {
+        const endpoint = `https://api.spotify.com/v1/me/following?type=${type === 'artist' ? 'artist' : 'user'}&ids=${id}`;
+        const response = await fetch(endpoint, {
+            method: 'PUT',
+            headers: { 
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            }
+        });
+        
+        if (!response.ok) throw new Error('Failed to follow');
+        res.json({ success: true });
+    } catch (error) {
+        res.status(400).json({ error: 'Failed to follow' });
+    }
+});
+
+app.delete('/api/follow/:type/:id', async (req, res) => {
+    const token = you_accesstoken;
+    const { type, id } = req.params;
+    
+    if (!token) {
+        return res.status(401).json({ error: 'Not authenticated' });
+    }
+
+    try {
+        const endpoint = `https://api.spotify.com/v1/me/following?type=${type === 'artist' ? 'artist' : 'user'}&ids=${id}`;
+        const response = await fetch(endpoint, {
+            method: 'DELETE',
+            headers: { 
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            }
+        });
+        
+        if (!response.ok) throw new Error('Failed to unfollow');
+        res.json({ success: true });
+    } catch (error) {
+        res.status(400).json({ error: 'Failed to unfollow' });
+    }
+});
+
+app.get('/api/me/following/:type/:id', async (req, res) => {
+    const token = you_accesstoken;
+    const { type, id } = req.params;
+    
+    if (!token) {
+        return res.status(401).json({ error: 'Not authenticated' });
+    }
+
+    try {
+        const endpoint = `https://api.spotify.com/v1/me/following/contains?type=${type === 'artist' ? 'artist' : 'user'}&ids=${id}`;
+        const response = await fetch(endpoint, {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        
+        const data = await response.json();
+        res.json(data);
+    } catch (error) {
+        res.status(400).json({ error: 'Failed to check following status' });
+    }
+});
+
+app.put('/api/follow/playlist/:id', async (req, res) => {
+    const token = you_accesstoken;
+    const { id } = req.params;
+    
+    if (!token) {
+        return res.status(401).json({ error: 'Not authenticated' });
+    }
+
+    try {
+        const endpoint = `https://api.spotify.com/v1/playlists/${id}/followers`;
+        const response = await fetch(endpoint, {
+            method: 'PUT',
+            headers: { 
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            }
+        });
+        
+        if (!response.ok) throw new Error('Failed to follow playlist');
+        res.json({ success: true });
+    } catch (error) {
+        res.status(400).json({ error: 'Failed to follow playlist' });
+    }
+});
+
+app.delete('/api/follow/playlist/:id', async (req, res) => {
+    const token = you_accesstoken;
+    const { id } = req.params;
+    
+    if (!token) {
+        return res.status(401).json({ error: 'Not authenticated' });
+    }
+
+    try {
+        const endpoint = `https://api.spotify.com/v1/playlists/${id}/followers`;
+        const response = await fetch(endpoint, {
+            method: 'DELETE',
+            headers: { 
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            }
+        });
+        
+        if (!response.ok) throw new Error('Failed to unfollow playlist');
+        res.json({ success: true });
+    } catch (error) {
+        res.status(400).json({ error: 'Failed to unfollow playlist' });
+    }
+});
+
+app.get('/api/follow/playlist/:id/status', async (req, res) => {
+    const token = you_accesstoken;
+    const { id } = req.params;
+    
+    if (!token) {
+        return res.status(401).json({ error: 'Not authenticated' });
+    }
+
+    try {
+        const endpoint = `https://api.spotify.com/v1/playlists/${id}/followers/contains`;
+        const response = await fetch(endpoint, {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        
+        const data = await response.json();
+
+        res.json(data);
+    } catch (error) {
+        res.status(400).json({ error: 'Failed to check playlist following status' });
+    }
+});
+
+app.get('/api/browse/new-releases', async (req, res) => {
+    if (!accessToken) {
+        await getAccessToken();
+    }
+    try {
+        const response = await fetch('https://api.spotify.com/v1/browse/new-releases?limit=6', {
+            headers: { 'Authorization': `Bearer ${accessToken}` }
+        });
+        const data = await response.json();
+        res.json(data);
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to fetch new releases' });
+    }
+});
+
+app.post('/api/signout', (req, res) => {
+    you_accesstoken = '';
+    res.json({ success: true });
 });
 
 app.get('/api/get/related-artists/:artistid', async (req, res) => {
@@ -414,4 +676,3 @@ module.exports = app;
 app.listen(port, () => {
     console.log(`Server is running on http://localhost:${port}`);
 });
-
