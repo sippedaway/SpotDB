@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Users | SpotDB</title>
+    <title>You | SpotDB</title>
     <link rel="icon" href="/spotdb/favicon.png">
 
     <meta name="description" content="SpotDB is a platform to explore all information for any Spotify release: songs, artists, albums, users, playlists and more...">
@@ -14,30 +14,35 @@
     <meta property="og:url" content="https://db.sipped.org">
     <meta name="robots" content="index, follow">
 
-    <link rel="stylesheet" href="/home/styles.css">
+    <link rel="stylesheet" href="/release/styles.css">
+    <link rel="stylesheet" href="/you/styles.css">
     <link rel="stylesheet" href="/nav/styles.css">
+
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
-
+    
 
     <div class="page">
-        <h1>Spotify public profile information</h1>
-        <p>Find any Spotify User's all public and hidden information easily</p>
+        
+    </div>
 
-        <h3>How to use the Search</h3>
-        <p>Put in the exact name or a Spotify User ID (Recommended) to fetch all information</p>
-
-        <h3>Why can't I find myself?</h3>
-        <p>Spotify's API does not allow searching Users, however you can simply put in your Spotify User ID to get all data! You <b>can</b> search up your Display Name, but it not always works, due to how Spotify's ID fetching work. We suggest using User IDs, found in the URL of a User page - that always works</p>
-
-        <div class="search-container" style="margin-top: 8%">
-            <input type="text" id="search-input" placeholder="Enter a Spotify Display Name or User ID">
-            <button id="search-btn">Search</button>
+    <div id="imageModal" class="modal">
+        <div class="modal-content">
+            <div>
+                <h1>Image preview</h1>
+                <p>Download or copy the original size image</p>
+            </div> 
+            <img id="modalImage" src="" alt="Full-size image">
+            <div class="modal-actions">
+                <button class="button sici" id="saveImage"><i class="fas fa-download" style="margin-right: 10px;"></i>Save Image</button>
+                <button class="button sici" id="copyImage"><i class="fas fa-copy" style="margin-right: 10px;"></i>Copy Image URL</button>
+                <button class="button sici" id="closeModal"><i class="fas fa-close" style="margin-right: 10px;"></i>Close</button>
+            </div>
         </div>
     </div>
 
+    <script src="/you/index.js"></script>
     <script src="/nav/nav.js"></script>
-    <script src="/users/script.js"></script>
 </body>
 </html>

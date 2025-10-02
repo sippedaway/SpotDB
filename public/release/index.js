@@ -1015,6 +1015,11 @@ async function populateArtistPage(data) {
     `;
     contentContainer.querySelector('.top-section').appendChild(table);
 
+    const followBanner = await createFollowBanner('artist', data);
+    if (followBanner) {
+        topSection.appendChild(followBanner);
+    }
+
     const albumResponse = await fetch(`/api/get/artist/albums/${data.id}`);
     if (!albumResponse.ok) {
         throw new Error('Failed to fetch artists discography, albums & singles');
@@ -1589,7 +1594,7 @@ async function populatePlaylistPage(data) {
     const visitArtistButton = document.createElement('button');
     visitArtistButton.id = 'visit-artist';
     visitArtistButton.classList.add('button');
-    visitArtistButton.innerHTML = '<i style="margin-right: 5px" class="fas fa-user"></i> Visit creators page';
+    visitArtistButton.innerHTML = `<i style="margin-right: 5px" class="fas fa-user"></i> Visit creator's page`;
 
     const visitSpotifyButton = document.createElement('button');
     visitSpotifyButton.id = 'visit-spotify';
@@ -1724,6 +1729,11 @@ async function populatePlaylistPage(data) {
     nd.appendChild(table);
     nd.appendChild(releaseDetails);
     topSection.appendChild(nd);
+
+    const followBanner = await createFollowBanner('playlist', data);
+    if (followBanner) {
+        topSection.appendChild(followBanner);
+    }
 
     await createCreatorsTab(data, artist);
     await createPlaylistTracklistTab(data);
@@ -1869,7 +1879,7 @@ async function createCreatorsTab(data, artistdata) {
 }
 
 async function populateUserPage(data) {
-    pagename = `${data.name} | SpotDB`;
+    pagename = `${data.display_name} | SpotDB`;
     pgdescription = `All information about ${data.name} by ${data.artists?.[0].name} on SpotDB`;
     document.title = pagename;
     document.querySelector('meta[property="og:title"]').setAttribute("content", pagename);
@@ -1906,28 +1916,80 @@ async function populateUserPage(data) {
         window.location.href = data.uri;
     });
 
+    const backgroundBlur = document.createElement('div');
+    backgroundBlur.classList.add('background-blur');
+    backgroundBlur.style.backgroundImage = `url("${data.images?.[0]?.url || '/default-album-cover.png'}")`;
+    document.body.insertBefore(backgroundBlur, document.body.firstChild);
+
     topSection.classList.add('top-section');
 
-    const ts = document.createElement('div');
-    ts.classList.add('ts');
+    const headerContainer = document.createElement('div');
+    headerContainer.classList.add('header-container');
 
-    const artistContainer = document.createElement('div');
-    artistContainer.classList.add('album-row');
-    artistContainer.innerHTML = `
-        ${data.images?.[0]?.url ? `<img src="${data.images[0].url}" class="img" alt="Artist Cover">` : ""}
-        <div class="album-details">
-            <h3><a href="/r/${data.id}">${data.display_name}</a></h3>
-        </div>
-    `;
-    const artistImage = artistContainer.querySelector('img');
-    if (artistImage) {
-        artistImage.addEventListener('click', () => handleImageClick(artistImage.src));
-    }
+    const headerLeft = document.createElement('div');
+    headerLeft.classList.add('header-left');
 
-    ts.appendChild(albumContainer);
-    ts.appendChild(artistContainer);
-    topSection.appendChild(ts);
+    const headerImage = document.createElement('img');
+    headerImage.classList.add('header-image');
+    headerImage.src = data.images?.[0]?.url || '/default-album-cover.png';
+    headerImage.alt = data.name;
+    headerImage.addEventListener('click', () => handleImageClick(headerImage.src));
+
+    const headerTitle = document.createElement('div');
+    headerTitle.classList.add('header-title');
+    headerTitle.textContent = data.display_name.length > 30 ? data.display_name.substring(0, 30) + '...' : data.display_name;
+
+    headerLeft.appendChild(headerImage);
+    headerLeft.appendChild(headerTitle);
+
+    const headerButtons = document.createElement('div');
+    headerButtons.classList.add('header-buttons');
+    headerButtons.appendChild(buttonRow);
+
+    headerContainer.appendChild(headerLeft);
+    headerContainer.appendChild(headerButtons);
+
+    topSection.appendChild(headerContainer);
     contentContainer.prepend(topSection);
+
+    const releaseDetails = document.createElement('div');
+    releaseDetails.classList.add('release-details');
+
+    const releaseImages = document.createElement('div');
+    releaseImages.classList.add('release-images');
+
+    const albumImage = document.createElement('img');
+    albumImage.classList.add('release-image');
+    albumImage.src = data.images?.[0]?.url;
+    albumImage.alt = data.name;
+    albumImage.addEventListener('click', () => handleImageClick(albumImage.src));
+
+    releaseImages.appendChild(albumImage);
+
+    const artistInfo = document.createElement('div');
+    artistInfo.classList.add('release-artist-info');
+
+    const metaInfo = document.createElement('div');
+    metaInfo.classList.add('release-meta');
+
+    const typeOrPopularity = document.createElement('div');
+    typeOrPopularity.classList.add('meta-item');
+    typeOrPopularity.textContent = `Followers: ${data.followers.total}` || `N/A`;
+
+    const type = document.createElement('div');
+    type.classList.add('meta-item');
+    type.textContent = `Type: ${data.type}` || `N/A`;
+
+    metaInfo.appendChild(typeOrPopularity);
+    metaInfo.appendChild(type);
+
+    artistInfo.appendChild(metaInfo);
+
+    releaseDetails.appendChild(releaseImages);
+    releaseDetails.appendChild(artistInfo);
+
+    const tar = document.createElement('div');
+    tar.classList.add("tar");
 
     const table = document.createElement('table');
     table.classList.add('info-table');
@@ -1937,7 +1999,15 @@ async function populateUserPage(data) {
         <tr><td>Followers</td><td>${data.followers.total || 'None'}</td></tr>
         <tr><td>Spotify URL</td><td><a href="${data.external_urls?.spotify || '#'}" target="_blank">${data.external_urls?.spotify ? 'Open link' : 'N/A'}</a></td></tr>
     `;
-    contentContainer.querySelector('.top-section').appendChild(table);
+    tar.appendChild(table);
+    tar.appendChild(releaseDetails);
+
+    topSection.appendChild(tar);
+
+    const followBanner = await createFollowBanner('artist', data);
+    if (followBanner) {
+        topSection.appendChild(followBanner);
+    }
 
     await createUserPlaylistsTab(data);
     createMediaTab(data);
@@ -1960,7 +2030,7 @@ async function createUserPlaylistsTab(user) {
     const tracklistTab = document.createElement('div');
     tracklistTab.id = 'playlists';
     tracklistTab.classList.add('tab-content');
-    tracklistTab.innerHTML = `<h3>Playlists created by ${user.display_name}</h3>`;
+    tracklistTab.innerHTML = `<h3>Public playlists created by ${user.display_name}</h3>`;
 
     const data = await fetchUserPlaylists(user.id); 
 
@@ -2433,6 +2503,104 @@ function handleImageClick(imageSrc) {
     closeButton.addEventListener('click', () => {
         modal.style.display = 'none';
     });
+}
+
+async function checkPlaylistFollowingStatus(playlistId) {
+    try {
+        const endpoint = `/api/follow/playlist/${playlistId}/status`;
+        const response = await fetch(endpoint);
+        if (!response.ok) return false;
+
+        const data = await response.json();
+        return data[0] || false;
+    } catch (error) {
+        console.error('Error checking playlist following status:', error);
+        return false;
+    }
+}
+
+async function checkFollowingStatus(type, id) {
+    try {
+        const endpoint = `/api/me/following/${type}/${id}`;
+        const response = await fetch(endpoint);
+
+        if (!response.ok) return false;
+
+        const data = await response.json();
+        console.log(data);
+        return data[0] || false;
+    } catch (error) {
+        console.error('Error checking following status:', error);
+        return false;
+    }
+}
+
+async function createFollowBanner(type, data) {
+    const banner = document.createElement('div');
+    banner.classList.add('follow-banner');
+
+    try {
+        const userResponse = await fetch('/api/me');
+        if (!userResponse.ok) return null;
+        const userData = await userResponse.json();
+        if (data.id === userData.id) return;
+
+        let isFollowing;
+        if (type === 'playlist') {
+            return
+        } else {
+            isFollowing = await checkFollowingStatus(
+                type === 'artist' ? 'artist' : 'user',
+                data.id
+            );
+        }
+
+        if (type === 'playlist' && data.owner.id === userData.id) return null;
+
+        banner.innerHTML = `
+            <div class="follow-banner-content">
+                <div class="follow-banner-left">
+                    <img src="${userData.images?.[0]?.url || '/default-profile.png'}" alt="Your profile">
+                    <span>Follow <strong>${data.name || data.display_name}</strong> as <strong>${userData.display_name}</strong></span>
+                </div>
+                <button class="follow-button ${isFollowing ? 'following' : ''}" onclick="toggleFollow('${type}', '${data.id}', this)">
+                    ${isFollowing ? 'Following' : 'Follow'}
+                </button>
+            </div>
+        `;
+
+        return banner;
+    } catch (error) {
+        console.error('Error creating follow banner:', error);
+        return null;
+    }
+}
+
+async function toggleFollow(type, id, button) {
+    try {
+        const isFollowing = button.classList.contains('following');
+        const method = isFollowing ? 'DELETE' : 'PUT';
+        const endpoint = type === 'playlist' ? 
+            `/api/follow/playlist/${id}` : 
+            `/api/follow/${type}/${id}`;
+
+        const response = await fetch(endpoint, {
+            method: method
+        });
+
+        console.log(method, endpoint, response);
+        checkFollowingStatus();
+        if (!response.ok) throw new Error(`Failed to ${isFollowing ? 'unfollow' : 'follow'}`);
+
+        button.classList.toggle('following');
+        button.textContent = isFollowing ? 'Follow' : 'Following';
+    } catch (error) {
+        console.error('Error toggling follow:', error);
+
+        const isFollowing = button.classList.contains('following');
+        button.classList.toggle('following');
+        button.textContent = isFollowing ? 'Following' : 'Follow';
+    }
 }
 
 fetchData();

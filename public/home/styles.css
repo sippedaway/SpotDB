@@ -113,11 +113,13 @@ body {
     color: white;
     font-size: 16px;
     cursor: pointer;
-    transition: all 0.3s ease;
+    padding: 10px 13px;
+    border-radius: 20px;
+    transition: all 0.2s ease;
 }
 
 .menu-button:hover {
-    color: #9eccff;
+    background-color: rgba(255, 255, 255, 0.1);
 }
 
 .menu-popup {
@@ -372,6 +374,7 @@ body.dark-mode .search-item::before {
 }
 
 .search-item {
+    position: relative;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -392,13 +395,120 @@ body.dark-mode .search-item::before {
     justify-content: center;
 }
 
+.auth-banner {
+    width: 100%;
+    background: linear-gradient(90deg, #1db954 0%, #1ed760 100%);
+    color: white;
+    padding: 10px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 100;
+    margin-bottom: 15px;
+    border-radius: 18px;
+}
+
+.banner-content {
+    display: flex;
+    align-items: center;
+    gap: 30px;
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.banner-text {
+    flex-grow: 1;
+}
+
+.banner-text h3 {
+    margin: 0 0 5px 0;
+    font-size: 1.2em;
+}
+
+.banner-text p {
+    margin: 0;
+    opacity: 0.9;
+    font-size: 0.95em;
+}
+
+.banner-close {
+    background: none;
+    border: none;
+    color: white;
+    cursor: pointer;
+    padding: 5px;
+    font-size: 1.2em;
+    margin-left: 15px;
+}
+
+.banner-close:hover i {
+    color: red;
+}
+
+body.dark-mode .auth-banner {
+    background: linear-gradient(90deg, #158f40 0%, #1aa34a 100%);
+}
+
+.auth-banner .spotify-button {
+    padding: 3px 8px;
+    white-space: nowrap;
+}
+
+.auth-banner .spotify-button i {
+    margin-right: 8px;
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 1;
+        transform: translateY(0);
+    }
+    to {
+        opacity: 0;
+        transform: translateY(-100%);
+    }
+}
+
+@media screen and (max-width: 1300px) {
+    .top-result {
+        width: 20vw;
+    }
+    .page {
+        width: 90vw;
+    }
+    .grid {
+        grid-template-columns: repeat(5, 1fr);
+    }
+}
+
+@media screen and (max-width: 1060px) {
+    .grid {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+
 .top-result-div {
     display: flex;
     align-items: center;
     gap: 20px;
 }
 
+.spotdb-logo-container {
+    display: flex;
+    justify-content: center;
+}
+
+.spotdb-logo {
+    width: 200px;
+    height: auto;
+}
+
 .search-item:hover {
+    border: 0.5px solid #1a1a1a;
+}
+
+body.dark-mode .search-item:hover {
     border: 0.5px solid white;
 }
 
@@ -428,12 +538,6 @@ body.dark-mode .search-item::before {
 .search-item .artists {
     font-size: 12px;
     color: #666;
-    margin-top: 5px;
-}
-
-.search-item .type {
-    font-size: 12px;
-    color: #999;
     margin-top: 5px;
 }
 
@@ -521,17 +625,17 @@ search-item .content .artists {
 .spotify-button {
     background-color: #1db954;
     color: white;
-    border: none;
+    border: 2px solid transparent;
     padding: 8px 16px;
     font-size: 14px;
     cursor: pointer;
     border-radius: 20px;
-    transition: all 0.3s ease;
+    transition: background-color 0.3s ease;
 }
 
 .spotify-button:hover {
-    background-color: #4caf50;
-    color: #9eccff;
+    background-color: #1E90FF;
+    border: 2px solid #1db954;
 }
 
 .search-section {
@@ -612,22 +716,27 @@ search-item .content .artists {
     background-color: #ff4d4d;
 }
 
-@media screen and (max-width: 930px) {
-    .m-h {
+@media screen and (max-width: 690px) {
+    .navbar-right, .m-h {
         display: none;
     }
-
-    .navbar-left, .navbar-right {
-        display: none;
+    .navbar {
+        justify-content: center;
     }
 }
 
-@media screen and (max-width: 800px) {
+@media screen and (max-width: 930px) {
+    .navbar-left {
+        display: none;
+    }
+
     .search-container {
         display: flex;
         flex-direction: column;
         align-items: center;
         margin-top: 20px;
+        background-color: #181818;
+        border-radius: 20px;
     }
 
     #search-input {
@@ -636,6 +745,7 @@ search-item .content .artists {
         font-size: 16px;
         border-radius: 12px;
         margin-bottom: 10px;
+        margin-top: 15px;
     }
 
     #search-btn {
@@ -643,7 +753,7 @@ search-item .content .artists {
         padding: 12px;
         font-size: 14px;
         border-radius: 12px;
-        background-color: #1db954;
+        background-color: #666;
         color: white;
         cursor: pointer;
         border: none;
@@ -651,12 +761,27 @@ search-item .content .artists {
         align-items: center;
         justify-content: center;
         gap: 8px;
+        margin-bottom: 15px;
+    }
+
+    .grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 15px;
     }
 
     .filters {
         display: inline;
-        width: 100%;
+        width: 85%;
         margin-top: 20px;
+    }
+
+    .filters h3 {
+        display: none;
+    }
+
+    .findusers-button {
+        margin-top: 10px;
     }
 
     .filters select,
@@ -674,12 +799,6 @@ search-item .content .artists {
         margin-top: 20px;
     }
 
-    .grid {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: 15px;
-    }
-
     .search-item {
         padding: 10px;
         text-align: center;
@@ -688,6 +807,16 @@ search-item .content .artists {
     .search-item img {
         width: 80px;
         height: 80px;
+    }
+
+    .tr-div .grid {
+        display: block;
+        gap: 10px;
+    }
+
+    .top-result {
+        width: auto;
+        margin-bottom: 10px;
     }
 
     .tabs-container {
@@ -794,4 +923,12 @@ body.dark-mode .secondary-buttons button:hover {
 
 #nav-search-input {
     background: #282828;
+}
+
+.search-item .type, .lol {
+    font-size: 12px;
+    color: #999;
+    margin-top: 5px;
+    display: flex;
+    justify-content: center;
 }

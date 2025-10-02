@@ -21,22 +21,38 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 });
 
+function closeBanner() {
+    const banner = document.querySelector('.auth-banner');
+    banner.style.animation = 'slideUp 0.3s ease forwards';
+    setTimeout(() => {
+        banner.style.display = 'none';
+    }, 300);
+
+    localStorage.setItem('bannerClosed', 'true');
+}
+
+const spotdblogo = document.querySelector('.spotdb-logo');
+
 function toggleDarkMode() {
     const isDarkMode = localStorage.getItem('darkMode') === 'true';
 
     if (isDarkMode) {
         localStorage.setItem('darkMode', 'false');
         document.body.classList.remove('dark-mode');
+        spotdblogo.src = '/spotdb/SpotDB_Black.png';
     } else {
         localStorage.setItem('darkMode', 'true');
         document.body.classList.add('dark-mode');
+        spotdblogo.src = '/spotdb/SpotDB_White.png';
     }
 }
 
 if (localStorage.getItem('darkMode') === 'true') {
     document.body.classList.add('dark-mode');
+    spotdblogo.src = '/spotdb/SpotDB_White.png';
 } else if (localStorage.getItem('darkMode') === 'false'){
     document.body.classList.remove('dark-mode');
+    spotdblogo.src = '/spotdb/SpotDB_Black.png';
 } else {
     toggleDarkMode();
 }
@@ -159,7 +175,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
             if (topResults.length > 0) {
                 const topResultsSection = document.createElement('div');
-                topResultsSection.classList.add('results-category');
+                topResultsSection.classList.add('results-category', 'tr-div');
                 topResultsSection.innerHTML = `<h2>Top Results</h2>`;
                 const topResultsGrid = document.createElement('div');
                 topResultsGrid.classList.add('grid');
@@ -305,3 +321,167 @@ function getCookie(name) {
     }
     return null;
 }
+
+const recommendations = [
+    {
+        name: "the now now and never",
+        id: "1JqSKahgRfnmk4rw82BBTL",
+        image: "https://i.scdn.co/image/ab67616d0000b2736f2e5817230413edcd000cc6",
+        type: "Album"
+    },
+    {
+        name: "Adrianne Lenker",
+        id: "4aKWmkWAKviFlyvHYPTNQY",
+        image: "https://i.scdn.co/image/ab6761610000e5eb5a7d5278cf9deda53119028c",
+        type: "Artist"
+    },
+    {
+        name: "The Winner Takes It All",
+        id: "3oEkrIfXfSh9zGnE7eBzSV",
+        image: "https://i.scdn.co/image/ab67616d0000b2734d08fc99eff4ed52dfce91fa",
+        type: "Track"
+    },
+    {
+        name: "To Pimp a Butterfly",
+        id: "7ycBtnsMtyVbbwTfJwRjSP",
+        image: "https://i.scdn.co/image/ab67616d0000b273cdb645498cd3d8a2db4d05e1",
+        type: "Album"
+    },
+    {
+        name: 'Something Stupid (From "Better Call Saul")',
+        id: "4kxZ8kCU7sL8YWBCuo0kIF",
+        image: "https://i.scdn.co/image/ab67616d0000b273263e48c2162aaa9ae5104daf",
+        type: "Track"
+    },
+    {
+        name: "Roads",
+        id: "2sW8fmnISifQTRgnRrQTYW",
+        image: "https://i.scdn.co/image/ab67616d0000b273dc20397b139223620af148f6",
+        type: "Track"
+    }
+];
+
+async function loadTrendingContent() {
+    const trendingSection = document.createElement('div');
+    trendingSection.classList.add('trending-section');
+
+    const newReleasesContainer = document.createElement('div');
+    newReleasesContainer.classList.add('results-category');
+    newReleasesContainer.innerHTML = '<h2>Albums</h2>';
+
+    const newReleasesGrid = document.createElement('div');
+    newReleasesGrid.classList.add('grid');
+
+    try {
+        const newReleasesResponse = await fetch('/api/browse/new-releases');
+        const newReleasesData = await newReleasesResponse.json();
+
+        newReleasesData.albums.items.forEach(album => {
+            const item = document.createElement('div');
+            item.classList.add('search-item');
+            item.innerHTML = `
+                <img src="${album.images[0].url}" alt="${album.name}">
+                <div class="content">
+                    <div class="name">${album.name}</div>
+                    <div class="artists">${album.artists.map(a => a.name).join(', ')}</div>
+                </div>
+                <div class="lol" style="color: #999">Album</div>
+
+            `;
+            item.addEventListener('click', () => {
+                window.location.href = `/r/${album.id}`;
+            });
+            newReleasesGrid.appendChild(item);
+        });
+    } catch (error) {
+        console.error('Error loading new releases:', error);
+        newReleasesGrid.innerHTML = '<p>Failed to load new releases</p>';
+    }
+
+    const recommendedContainer = document.createElement('div');
+    recommendedContainer.classList.add('results-category');
+    recommendedContainer.innerHTML = '<h2>Recommended by us</h2>';
+
+    const recommendedGrid = document.createElement('div');
+    recommendedGrid.classList.add('grid');
+
+    recommendations.forEach(artist => {
+        const item = document.createElement('div');
+        item.classList.add('search-item');
+        item.innerHTML = `
+            <img src="${artist.image}" alt="${artist.name}">
+            <div class="content">
+                <div class="name">${artist.name}</div>
+            </div>
+            <div class="lol" style="color: #999">${artist.type}</div>
+        `;
+        item.addEventListener('click', () => {
+            window.location.href = `/r/${artist.id}`;
+        });
+        recommendedGrid.appendChild(item);
+    });
+
+    newReleasesContainer.appendChild(newReleasesGrid);
+
+    recommendedContainer.appendChild(recommendedGrid);
+
+    trendingSection.appendChild(newReleasesContainer);
+    trendingSection.appendChild(recommendedContainer);
+
+    const searchContainer = document.querySelector('.results-container');
+    searchContainer.appendChild(trendingSection);
+}
+
+document.addEventListener('DOMContentLoaded', loadTrendingContent);
+
+async function updateAuthBanner() {
+    const banner = document.querySelector('.auth-banner');
+    if (!banner) return;
+
+    try {
+        const response = await fetch('/api/me');
+        const userData = await response.json();
+        const messages = [
+            "Yo! ",
+            "Well hey there, ",
+            "welcome back ",
+            "Greetings, ",
+            "HEYYYY ",
+            "Hiya, ",
+            "What’s up, ",
+            "Hey hey, "
+        ];
+
+        if (!userData.error) {
+
+            banner.innerHTML = `
+                <div class="banner-content">
+                    <div class="banner-text">
+                        <div style="display: flex; align-items: center;">
+                            <img src="${userData.images[0].url}" alt="User avatar" style="width: 50px; height: 50px; border-radius: 50%; margin-right: 15px;">
+                            <p><strong>${messages[Math.floor(Math.random() * messages.length)]}${userData.display_name}!</strong> View your Spotify statistics, liked songs, and playlists.</p>
+                        </div>
+                    </div>
+                </div>
+                </div>
+                    <button onclick="window.location.href='/you'" class="spotify-button" style="padding: 10px 18px; font-size: 14px; margin-right: 10px;">
+                        <i class="fas fa-user"></i>Go to your page
+                    </button>
+                    <button class="banner-close" onclick="closeBanner()">
+                        <i class="fas fa-times"></i>
+                    </button>
+            `;
+        }
+    } catch (error) {
+        console.error('Error checking auth status:', error);
+    }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    const banner = document.querySelector('.auth-banner');
+    if (localStorage.getItem('bannerClosed') === 'true') {
+        banner.style.display = 'none';
+    } else {
+        updateAuthBanner();
+    }
+});

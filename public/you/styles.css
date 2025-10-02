@@ -1,0 +1,129 @@
+.page {
+    margin-top: 5%;
+}
+
+.profile-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.profile-header {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    padding: 20px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 15px;
+    backdrop-filter: blur(10px);
+}
+
+#profile-picture {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid #1db954;
+}
+
+#profile-name {
+    font-size: 2em;
+    margin: 0;
+}
+
+body.dark-mode .profile-header {
+    background: rgba(0, 0, 0, 0.2);
+}
+
+.filters-container {
+    display: flex;
+    gap: 20px;
+    margin-bottom: 20px;
+    padding: 15px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 10px;
+}
+
+.filter-group {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.filter-group label {
+    font-size: 0.9em;
+    color: #666;
+}
+
+.filter-group select {
+    padding: 5px 10px;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+    background: white;
+    color: #333;
+    cursor: pointer;
+}
+
+body.dark-mode .filter-group label {
+    color: #aaa;
+}
+
+body.dark-mode .filter-group select {
+    background: #333;
+    border-color: #444;
+    color: #fff;
+}
+
+.filter-group select:hover {
+    border-color: #1db954;
+}
+
+.filter-group select:focus {
+    outline: none;
+    border-color: #1db954;
+    box-shadow: 0 0 0 2px rgba(29, 185, 84, 0.2);
+}
+
+.eye-button {
+    background: none;
+    border: none;
+    color: #666;
+    cursor: pointer;
+    padding: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: color 0.2s ease;
+}
+
+.eye-button:hover {
+    color: #1db954;
+}
+
+.action-buttons {
+    display: flex;
+    gap: 10px;
+    align-self: flex-end;
+    margin-top: 10px;
+}
+
+.sign-out-btn {
+    background-color: #dc3545;
+    color: white;
+    border: 1px solid transparent;
+    padding: 8px 16px;
+    border-radius: 20px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.3s ease;
+}
+
+.sign-out-btn:hover {
+    border: 1px solid white;
+}
+
+.full-table-btn {
+    margin-top: 0;  /* Remove margin since it's now handled by the container */
+}

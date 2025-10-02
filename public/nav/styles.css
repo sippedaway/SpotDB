@@ -55,11 +55,13 @@
     color: white;
     font-size: 16px;
     cursor: pointer;
-    transition: all 0.3s ease;
+    padding: 10px 13px;
+    border-radius: 20px;
+    transition: all 0.2s ease;
 }
 
 .menu-button:hover {
-    color: #9eccff;
+    background-color: rgba(255, 255, 255, 0.1);
 }
 
 .menu-popup {
@@ -96,17 +98,17 @@
 .spotify-button {
     background-color: #1db954;
     color: white;
-    border: none;
+    border: 2px solid transparent;
     padding: 8px 16px;
     font-size: 14px;
     cursor: pointer;
     border-radius: 20px;
-    transition: all 0.3s ease;
+    transition: background-color 0.3s ease;
 }
 
 .spotify-button:hover {
-    background-color: #4caf50;
-    color: #9eccff;
+    background-color: #1E90FF;
+    border: 2px solid #1db954;
 }
 
 .close-btn {
@@ -130,12 +132,6 @@
 
 .bold-section {
     font-weight: bold;
-}
-
-@media screen and (max-width: 900px) {
-    .main-content {
-        margin-top: 10%;
-    }
 }
 
 @media screen and (max-width: 800px) {
@@ -189,12 +185,6 @@
 
     h1, h2, h3 {
         font-size: 1.5rem;
-    }
-}
-
-@media screen and (max-width: 550px) {
-    .main-content {
-        margin-top: 25%;
     }
 }
 
@@ -258,12 +248,18 @@
 }
 
 @media screen and (max-width: 930px) {
-    .m-h {
+    .navbar-left {
+        display: none;
+    }
+}
+
+@media screen and (max-width: 700px) {
+    .navbar-right, .m-h {
         display: none;
     }
 
-    .navbar-left, .navbar-right {
-        display: none;
+    .navbar {
+        justify-content: center;
     }
 }
 
@@ -370,6 +366,17 @@
         padding: 10px;
         font-size: 14px;
     }
+
+    .header-container {
+        display: block;
+    }
+
+    .header-left {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-bottom: 15px;
+    }
 }
 
 @media screen and (max-width: 570px) {
@@ -382,6 +389,79 @@
     .search-container {
         margin-top: 15%;
     }
+}
+
+.profile-dropdown {
+    position: relative;
+    margin-left: 10px;
+}
+
+.profile-button {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: none;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 20px;
+    cursor: pointer;
+    color: white;
+    transition: background-color 0.2s;
+}
+
+.profile-button:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.profile-button img {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.profile-button i {
+    font-size: 12px;
+    transition: transform 0.2s;
+}
+
+.profile-menu {
+    display: none;
+    position: absolute;
+    top: 100%;
+    right: 0;
+    background: #282828;
+    border-radius: 8px;
+    padding: 8px;
+    margin-top: 5px;
+    min-width: 200px;
+}
+
+.profile-menu.show {
+    display: block;
+}
+
+.profile-menu button {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    padding: 10px;
+    border: none;
+    background: none;
+    color: white;
+    cursor: pointer;
+    border-radius: 15px;
+    text-align: left;
+}
+
+.profile-menu button:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.profile-menu i {
+    width: 20px;
+    text-align: center;
 }
 
 /* keep last */

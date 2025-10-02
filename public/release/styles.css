@@ -192,7 +192,6 @@ h3 {
     color: #888;
 }
 
-
 .spotify-url-btn {
     border: none;
     display: inline-block;
@@ -460,6 +459,10 @@ input {
     .lower-row {
         gap: 15px;
     }
+
+    .follow-banner {
+        width: 100%;
+    }
 }
 
 .modal {
@@ -660,7 +663,7 @@ input {
     font-family: 'Neue Haas Grotesk';
 }
 
-/* DARK THEME */ /* DARK THEME */ /* DARK THEME */ /* DARK THEME */ /* DARK THEME */ /* DARK THEME */ /* DARK THEME */ /* DARK THEME */ /* DARK THEME    */
+        
 
 body.dark-mode {
     background-color: #2a2a2a;
@@ -791,6 +794,7 @@ body.dark-mode .modal-content {
     align-items: center;
     gap: 8px;
     margin-top: 20px;
+    height: 34px;
 }
 
 body.dark-mode .full-table-btn {
@@ -846,7 +850,6 @@ body.dark-mode .full-table-btn {
     border: 1px solid white;
 }
 
-/* Dark mode styles */
 body.dark-mode .full-table-content {
     background: #1a1a1a;
     color: #fff;
@@ -944,3 +947,99 @@ body.dark-mode .meta-item {
     display: block;
 }
 
+@media screen and (max-width: 585px) {
+    #visit-spotify {
+        display: none;
+    }
+}
+
+@media (max-width: 875px) {
+    .tar {
+        display: contents;
+        width: 100vw;
+    }
+
+    .info-table {
+        width: 90vw;
+    }
+}
+.follow-banner {
+    width: 30%;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-radius: 12px;
+    margin-top: 20px;
+    padding: 15px 20px;
+}
+
+.follow-banner-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.follow-banner-left {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.follow-banner-left img {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.follow-button {
+    background-color: #1db954;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: all 0.3s ease;
+}
+
+.follow-button:hover {
+    background-color: #1ed760;
+    transform: scale(1.05);
+}
+
+.follow-button.following {
+    background-color: #333;
+}
+
+.follow-button.following:hover {
+    background-color: #dc3545;
+}
+
+body.dark-mode .follow-banner {
+    background: rgba(0, 0, 0, 0.2);
+}
+
+@media (max-width: 768px) {
+    .follow-banner {
+        width: 80%;
+    }
+
+    .follow-banner-content {
+        flex-direction: column;
+        gap: 15px;
+    }
+    
+    .follow-button {
+        width: 100%;
+    }
+}
+
+@media (max-width: 1200px) {
+    .tar {
+        width: 90vw;
+    }
+    .follow-banner {
+        width: 70%;
+    }
+}
