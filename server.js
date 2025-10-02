@@ -14,7 +14,7 @@ const SPOTIFY_TOKEN_URL = 'https://accounts.spotify.com/api/token';
 const SPOTIFY_API_URL = 'https://api.spotify.com/v1';
 const CLIENT_ID = process.env.CLIENT_ID;
 const CLIENT_SECRET = process.env.CLIENT_SECRET;
-const REDIRECT_URI = 'http://db.sipped.org/auth/callback';
+const REDIRECT_URI = 'https://db.sipped.org/auth/callback';
 
 let accessToken = '';
 let you_accesstoken = '';
@@ -676,4 +676,5 @@ module.exports = app;
 app.listen(port, () => {
     console.log(`Server is running on http://localhost:${port}`);
 });
+
 
