@@ -2,7 +2,6 @@ async function fetchUserProfile() {
     try {
         const response = await fetch('/api/me');
         if (!response.ok) {
-            window.location.href = '/';
             return;
         }
 
@@ -614,4 +613,5 @@ if (localStorage.getItem('darkMode') === 'true') {
     document.body.classList.add('dark-mode');
 } else {
     document.body.classList.remove('dark-mode');
+
 }
