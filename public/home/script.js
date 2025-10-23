@@ -325,6 +325,7 @@ function getCookie(name) {
 const recommendations = [
     {
         name: "the now now and never",
+        artist: "what is your name?",
         id: "1JqSKahgRfnmk4rw82BBTL",
         image: "https://i.scdn.co/image/ab67616d0000b2736f2e5817230413edcd000cc6",
         type: "Album"
@@ -337,24 +338,28 @@ const recommendations = [
     },
     {
         name: "The Winner Takes It All",
+        artist: "ABBA",
         id: "3oEkrIfXfSh9zGnE7eBzSV",
         image: "https://i.scdn.co/image/ab67616d0000b2734d08fc99eff4ed52dfce91fa",
         type: "Track"
     },
     {
         name: "To Pimp a Butterfly",
+        artist: "Kendrick Lamar",
         id: "7ycBtnsMtyVbbwTfJwRjSP",
         image: "https://i.scdn.co/image/ab67616d0000b273cdb645498cd3d8a2db4d05e1",
         type: "Album"
     },
     {
         name: 'Something Stupid (From "Better Call Saul")',
+        artist: "Lola Marsh",
         id: "4kxZ8kCU7sL8YWBCuo0kIF",
         image: "https://i.scdn.co/image/ab67616d0000b273263e48c2162aaa9ae5104daf",
         type: "Track"
     },
     {
         name: "Roads",
+        artist: "Portishead",
         id: "2sW8fmnISifQTRgnRrQTYW",
         image: "https://i.scdn.co/image/ab67616d0000b273dc20397b139223620af148f6",
         type: "Track"
@@ -412,6 +417,7 @@ async function loadTrendingContent() {
             <img src="${artist.image}" alt="${artist.name}">
             <div class="content">
                 <div class="name">${artist.name}</div>
+                ${artist.artist ? `<div class="artists">${artist.artist}</div>` : ''}
             </div>
             <div class="lol" style="color: #999">${artist.type}</div>
         `;
