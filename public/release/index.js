@@ -724,6 +724,7 @@ function createTracklistTab(data) {
                 const image = document.createElement('img');
                 image.classList.add('track-img');
                 image.style.width = '50px';
+                image.style.borderRadius = '4px';
                 image.src = data.images?.[2]?.url;
                 image.alt = track.name;
 
@@ -733,6 +734,33 @@ function createTracklistTab(data) {
                 const line1 = document.createElement('div');
                 line1.style.display = 'flex';
                 line1.style.justifyContent = 'space-between';
+
+                const tracknum = document.createElement('div');
+                tracknum.style.background = 'rgba(255, 255, 255, 0.1)';
+                tracknum.style.borderRadius = '50%';
+                tracknum.style.width = '18px';
+                tracknum.style.height = '18px';
+                tracknum.style.display = 'flex';
+                tracknum.style.alignItems = 'center';
+                tracknum.style.justifyContent = 'center';
+                tracknum.style.fontSize = '12px';
+                tracknum.innerHTML = `${track.track_number}`;
+
+                const explc = document.createElement('div');
+                explc.style.background = 'rgba(255, 255, 255, 0.1)';
+                explc.style.borderRadius = '50%';
+                explc.style.width = '18px';
+                explc.style.height = '18px';
+                explc.style.display = 'flex';
+                explc.style.alignItems = 'center';
+                explc.style.justifyContent = 'center';
+                explc.style.fontSize = '12px';
+                explc.innerHTML = track.explicit ? 'E' : '';
+
+                const line1b = document.createElement('div');
+                line1b.style.display = 'flex';
+                line1b.style.alignItems = 'center';
+                line1b.style.gap = '5px';
 
                 const trackName = document.createElement('div');
                 trackName.classList.add('track-name');
@@ -745,10 +773,16 @@ function createTracklistTab(data) {
 
                 const trackDuration = document.createElement('div');
                 trackDuration.classList.add('track-duration');
-                trackDuration.textContent = "#" + track.track_number + ": " + formatDuration(track.duration_ms);
+                trackDuration.textContent = formatDuration(track.duration_ms);
 
                 trackItem.appendChild(image);
-                line1.appendChild(trackName);
+                line1b.appendChild(tracknum);
+                if (track.explicit)
+                    {
+                        line1b.appendChild(explc);
+                    }
+                line1b.appendChild(trackName);
+                line1.appendChild(line1b);
                 line1.appendChild(trackDuration);
                 uhimage.appendChild(line1);
                 uhimage.appendChild(artistName);
