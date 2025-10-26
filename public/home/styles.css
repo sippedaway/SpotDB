@@ -346,7 +346,8 @@ body.dark-mode .search-item::before {
 }
 
 .filters select option {
-    font-family: 'Neue Haas Grotesk';
+    font-family: 'Neue Haas Grotesk', sans-serif;
+    font-weight: normal;
 }
 
 .results-container {

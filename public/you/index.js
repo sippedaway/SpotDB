@@ -2,6 +2,7 @@ async function fetchUserProfile() {
     try {
         const response = await fetch('/api/me');
         if (!response.ok) {
+            window.location.href = '/';
             return;
         }
 
@@ -315,8 +316,11 @@ async function createTopArtistsTab() {
             grid.classList.add('grid');
 
             data.artists.items.forEach(artist => {
-                const item = document.createElement('div');
+                const item = document.createElement('a');
                 item.classList.add('track-item', 'artist-item');
+                item.href = `/r/${artist.id}`;
+                item.style.textDecoration = 'none';
+                item.style.color = 'inherit';
                 item.innerHTML = `
                     <img src="${artist.images?.[0]?.url}" class='artist-img' alt="${artist.name}">
                     <div class="track-name">${artist.name}</div>
@@ -375,8 +379,11 @@ async function createTopTracksTab() {
 
         if (data?.items?.length) {
             data.items.forEach(track => {
-                const trackItem = document.createElement('div');
+                const trackItem = document.createElement('a');
                 trackItem.classList.add('track-item');
+                trackItem.href = `/r/${track.id}`;
+                trackItem.style.textDecoration = 'none';
+                trackItem.style.color = 'inherit';
                 trackItem.innerHTML = `
                     <img src="${track.album.images?.[0]?.url}" class="track-img" style="width: 50px;">
                     <div style="width: 100%;">
@@ -448,13 +455,15 @@ async function createFollowingTab() {
             grid.classList.add('grid');
 
             data.artists.items.forEach(artist => {
-                const item = document.createElement('div');
+                const item = document.createElement('a');
                 item.classList.add('track-item', 'artist-item');
                 item.innerHTML = `
                     <img src="${artist.images?.[0]?.url}" class='artist-img' alt="${artist.name}">
                     <div class="track-name">${artist.name}</div>
                 `;
-                item.addEventListener('click', () => window.location.href = `/r/${artist.id}`);
+                item.href = `/r/${artist.id}`;
+                item.style.textDecoration = 'none';
+                item.style.color = 'inherit';
                 grid.appendChild(item);
             });
             contentContainer.appendChild(grid);
@@ -613,5 +622,4 @@ if (localStorage.getItem('darkMode') === 'true') {
     document.body.classList.add('dark-mode');
 } else {
     document.body.classList.remove('dark-mode');
-
 }

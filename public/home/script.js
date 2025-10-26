@@ -181,12 +181,12 @@ document.addEventListener("DOMContentLoaded", function () {
                 topResultsGrid.classList.add('grid');
 
                 topResults.forEach(item => {
-                    const topResultItem = document.createElement('div');
+                    const topResultItem = document.createElement('a');
                     topResultItem.classList.add('search-item');
                     topResultItem.classList.add('top-result');
-                    topResultItem.addEventListener('click', function() {
-                        window.location.href = `/r/${item.id}`;
-                    });
+                    topResultItem.href = `/r/${item.id}`;
+                    topResultItem.style.textDecoration = 'none';
+                    topResultItem.style.color = 'inherit';
 
                     let explicitTag = '';
                     if (item.type === 'track' && item.explicit) {
@@ -234,8 +234,11 @@ document.addEventListener("DOMContentLoaded", function () {
             grid.classList.add('grid');
 
             items.forEach(item => {
-                const searchItem = document.createElement('div');
+                const searchItem = document.createElement('a');
                 searchItem.classList.add('search-item');
+                searchItem.href = `/r/${item.id}`;
+                searchItem.style.textDecoration = 'none';
+                searchItem.style.color = 'inherit';
 
                 let explicitTag = '';
                 if (item.type === 'track' && item.explicit) {
@@ -257,10 +260,6 @@ document.addEventListener("DOMContentLoaded", function () {
                     </div>
                     <div class="type">${item.type.charAt(0).toUpperCase() + item.type.slice(1)}</div>
                 `;
-
-                searchItem.addEventListener('click', () => {
-                    window.location.href = `/r/${item.id}`;
-                });
 
                 grid.appendChild(searchItem);
             });
@@ -285,6 +284,10 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
     navSearchInput.addEventListener('keydown', function (event) {
+        if (window.navSearchOverlayOpen) {
+
+            return;
+        }
         if (event.key === 'Enter') {
             startsearch(navSearchInput.value);
         }
@@ -292,6 +295,10 @@ document.addEventListener("DOMContentLoaded", function () {
 
     function startsearch(q) {
         if (!q) {
+            return;
+        }
+        if (q.length === 22 && /^[A-Za-z0-9]{22}$/.test(q)) {
+            window.location.href = `/r/${q}`;
             return;
         }
         window.location.href = `/q?=${encodeURIComponent(q)}`;
@@ -372,7 +379,7 @@ async function loadTrendingContent() {
 
     const newReleasesContainer = document.createElement('div');
     newReleasesContainer.classList.add('results-category');
-    newReleasesContainer.innerHTML = '<h2>Albums</h2>';
+    newReleasesContainer.innerHTML = '<h2>Spotify recommended albums</h2>';
 
     const newReleasesGrid = document.createElement('div');
     newReleasesGrid.classList.add('grid');
@@ -382,8 +389,11 @@ async function loadTrendingContent() {
         const newReleasesData = await newReleasesResponse.json();
 
         newReleasesData.albums.items.forEach(album => {
-            const item = document.createElement('div');
+            const item = document.createElement('a');
             item.classList.add('search-item');
+            item.href = `/r/${album.id}`;
+            item.style.textDecoration = 'none';
+            item.style.color = 'inherit';
             item.innerHTML = `
                 <img src="${album.images[0].url}" alt="${album.name}">
                 <div class="content">
@@ -411,7 +421,10 @@ async function loadTrendingContent() {
     recommendedGrid.classList.add('grid');
 
     recommendations.forEach(artist => {
-        const item = document.createElement('div');
+        const item = document.createElement('a');
+        item.href = `/r/${artist.id}`;
+            item.style.textDecoration = 'none';
+            item.style.color = 'inherit';
         item.classList.add('search-item');
         item.innerHTML = `
             <img src="${artist.image}" alt="${artist.name}">

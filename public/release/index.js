@@ -8,12 +8,7 @@ async function fetchData() {
     try {
         const response = await fetch(`/api/get/${id}`);
         if (!response.ok) {
-            contentContainer.style.marginTop = '20%';
-            contentContainer.innerHTML = `
-                <h1>Well, something's wrong</h1>
-                <p style="margin-left: 0" ><b>404</b> Page not found</p>
-                <button class="button" onclick="window.location.href='/'" style="margin-top: 3%;">Go home</button>
-            `;
+            window.location.href = '/404';
         }
 
         const data = await response.json();
@@ -574,10 +569,13 @@ async function createMoreTab(data) {
 
         if (ad.items.length > 0) {
             ad.items.slice(0, 10).forEach(album => {
-                const item = document.createElement('div');
+                const item = document.createElement('a');
             item.classList.add('track-item', 'artist-item');
             item.style.position = 'relative';
             item.style.overflow = 'hidden'; 
+            item.href = `/r/${album.id}`;
+            item.style.textDecoration = 'none';
+            item.style.color = 'inherit';
 
             const backgroundBlur = document.createElement('div');
             backgroundBlur.classList.add('background-blur');
@@ -652,9 +650,12 @@ async function createArtistsTab(data) {
         for (const artist of data.artists) {
             const ar = await fetchArtistDetails(artist.id);
 
-            const item = document.createElement('div');
+            const item = document.createElement('a');
             item.classList.add('track-item');
             item.classList.add('artist-item');
+            item.href = `/r/${artist.id}`;
+            item.style.textDecoration = 'none';
+            item.style.color = 'inherit';
 
             const artistname = document.createElement('div');
             artistname.classList.add('track-name');
@@ -667,10 +668,6 @@ async function createArtistsTab(data) {
 
             item.appendChild(artistimg);
             item.appendChild(artistname);
-
-            item.addEventListener('click', () => {
-                window.location.href = `/r/${artist.id}`;
-            });
 
             artistTab.appendChild(item);
         }
@@ -718,8 +715,11 @@ function createTracklistTab(data) {
             }
 
             tracksByDisc[discNumber].forEach(track => {
-                const trackItem = document.createElement('div');
-                trackItem.classList.add('track-item');
+                const trackItem = document.createElement('a');
+trackItem.classList.add('track-item');
+trackItem.href = `/r/${track.id}`;
+trackItem.style.textDecoration = 'none';
+trackItem.style.color = 'inherit';
 
                 const image = document.createElement('img');
                 image.classList.add('track-img');
@@ -787,10 +787,6 @@ function createTracklistTab(data) {
                 uhimage.appendChild(line1);
                 uhimage.appendChild(artistName);
                 trackItem.appendChild(uhimage);
-
-                trackItem.addEventListener('click', () => {
-                    window.location.href = `/r/${track.id}`;
-                });
 
                 tracklistTab.appendChild(trackItem);
             });
@@ -1078,10 +1074,13 @@ async function createDiscographyTab(albumData) {
 
     if (albumData.items?.length) {
         albumData.items.forEach(album => {
-            const item = document.createElement('div');
+            const item = document.createElement('a');
             item.classList.add('track-item', 'artist-item');
             item.style.position = 'relative';
             item.style.overflow = 'hidden'; 
+            item.href = `/r/${album.id}`;
+            item.style.textDecoration = 'none';
+            item.style.color = 'inherit';
 
             const backgroundBlur = document.createElement('div');
             backgroundBlur.classList.add('background-blur');
@@ -1145,10 +1144,13 @@ async function createArtistAlbumsTab(albumData) {
 
     if (albumItems?.length) {
         albumData.items.forEach(album => {
-            const item = document.createElement('div');
+            const item = document.createElement('a');
             item.classList.add('track-item', 'artist-item');
             item.style.position = 'relative';
-            item.style.overflow = 'hidden'; 
+            item.style.overflow = 'hidden';
+            item.href = `/r/${album.id}`;
+            item.style.textDecoration = 'none';
+            item.style.color = 'inherit';
 
             const backgroundBlur = document.createElement('div');
             backgroundBlur.classList.add('background-blur');
@@ -1212,10 +1214,13 @@ async function createArtistSinglesTab(albumData) {
 
     if (albumItems?.length) {
         albumItems.forEach(album => {
-            const item = document.createElement('div');
+            const item = document.createElement('a');
             item.classList.add('track-item', 'artist-item');
             item.style.position = 'relative';
             item.style.overflow = 'hidden'; 
+            item.href = `/r/${album.id}`;
+            item.style.textDecoration = 'none';
+            item.style.color = 'inherit';
 
             const backgroundBlur = document.createElement('div');
             backgroundBlur.classList.add('background-blur');
@@ -1568,11 +1573,12 @@ async function createAlbumsTab(data) {
     albumsTab.classList.add('tab-content');
     albumsTab.innerHTML = `<h3>Track's release</h3>`;
 
-    const item = document.createElement('div');
+    const item = document.createElement('a');
     item.classList.add('track-item');
     item.classList.add('artist-item');
-
-    item.addEventListener("click", () => window.location.href = `/r/${data.album.id}`);
+    item.href = `/r/${data.album.id}`;
+    item.style.textDecoration = 'none';
+    item.style.color = 'inherit';
 
     const trackName = document.createElement('div');
     trackName.classList.add('track-name');
@@ -2293,7 +2299,6 @@ async function populateShowPage(data) {
     document.querySelector('meta[property="og:title"]').setAttribute("content", pagename);
     document.querySelector('meta[property="og:description"]').setAttribute("content", pgdescription);
 
-2
     const buttonRow = document.createElement('div');
     buttonRow.classList.add('button-row');
 
@@ -2388,7 +2393,6 @@ async function populateShowPage(data) {
 
     createEpisodesTab(data);
     createDescriptionTab(data);
-    createRegionTab(data);
     createMediaTab(data);
     createEmbedTab(data, 'show');
 
@@ -2641,6 +2645,10 @@ fetchData();
 
 const navSearchInput = document.getElementById('nav-search-input');
 navSearchInput.addEventListener('keydown', function (event) {
+    if (window.navSearchOverlayOpen) {
+
+        return;
+    }
     if (event.key === 'Enter') {
         window.location.href = `/q?=${encodeURIComponent(navSearchInput.value)}`;
     }
