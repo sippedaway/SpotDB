@@ -17,7 +17,7 @@ function createNav() {
     const center = document.createElement('div');
     center.classList.add('navbar-center');
     center.innerHTML = `
-        <a href="/"><img class="logo" id="logo" src="https://raw.githubusercontent.com/sippedaway/SpotDB/refs/heads/main/public/spotdb/SpotDB_White.png" alt="SpotDB logo"></a>
+        <a href="/"><img class="logo" id="logo" src="/spotdb/SpotDB_White.png" alt="SpotDB logo"></a>
         <div class="nav-search-container">
             <div class="nav-search-bar">
                 <i style="margin-left: 5px;" class="fas fa-search"></i>
@@ -374,5 +374,6 @@ function handleSignOut() {
         })
         .catch(error => console.error('Error signing out:', error));
 }
+
 
 createNav();
