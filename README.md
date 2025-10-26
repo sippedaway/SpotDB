@@ -31,6 +31,13 @@ However, Spotify's API is still kinda limited. For instance, **user profiles can
 The information you find depends on what you look for, but overall it is **EVERYTHING Spotify stores** in their public API!
 
 ## Version
+#### 1.4
+- **Release date**: 2025-10-26
+- Nav search menu
+- Loading skeletons
+- Universal 404 page
+- All items are now hyperlinks
+- Updated SpotDB logo
 #### 1.3 Fixes
 - **Release date**: 2025-10-23
 - Explicit tag in album tracklists
