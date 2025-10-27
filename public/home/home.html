@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SpotDB</title>
+    <title>SpotDB — Spotify Database</title>
     <link rel="icon" href="/spotdb/favicon.png">
 
     <meta name="description" content="SpotDB is a platform to explore all information for any Spotify release: songs, artists, albums, users, playlists and more...">
@@ -23,20 +23,6 @@
 
     <div class="page">
         <p id="error" style="display: none;">There was an error, probably on our side... Sorry!</p>
-
-        <div class="auth-banner" id="banner">
-        <div class="banner-content">
-            <div class="banner-text">
-                <p><strong>New! Sign-in with Spotify</strong> and access additional features and information about YOU!</p>
-            </div>
-        </div>
-        <button onclick="window.location.href='/auth/login'" class="spotify-button">
-                <i class="fab fa-spotify"></i>Sign in with Spotify
-            </button>
-        <button class="banner-close" onclick="closeBanner()">
-            <i class="fas fa-times"></i>
-        </button>
-        </div>
 
         <div class="search-container">
             <input type="text" id="search-input" placeholder="Search for artists, albums, tracks...">

@@ -21,16 +21,6 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 });
 
-function closeBanner() {
-    const banner = document.querySelector('.auth-banner');
-    banner.style.animation = 'slideUp 0.3s ease forwards';
-    setTimeout(() => {
-        banner.style.display = 'none';
-    }, 300);
-
-    localStorage.setItem('bannerClosed', 'true');
-}
-
 const spotdblogo = document.querySelector('.spotdb-logo');
 
 function toggleDarkMode() {
@@ -167,6 +157,17 @@ document.addEventListener("DOMContentLoaded", function () {
     function updateResults() {
         resultsContainer.innerHTML = "";
         resultsContainer.appendChild(tabsContainer);
+
+        const urlParams = new URLSearchParams(window.location.search);
+    const query = urlParams.get("") || document.querySelector("#search-input")?.value || "";
+    if (query) {
+        const summaryText = document.createElement("div");
+        summaryText.classList.add("results-summary");
+        summaryText.style.color = "gray";
+        summaryText.style.fontWeight = "500";
+        summaryText.textContent = `Showing 12 search results for each category for "${decodeURIComponent(query)}" in ${regionMappings[marketSelect.value] || marketSelect.value}.`;
+        resultsContainer.appendChild(summaryText);
+    }
 
         if (activeFilter === "All") {
             const topResults = ['albums', 'tracks', 'artists']
@@ -453,54 +454,14 @@ async function loadTrendingContent() {
 
 document.addEventListener('DOMContentLoaded', loadTrendingContent);
 
-async function updateAuthBanner() {
-    const banner = document.querySelector('.auth-banner');
-    if (!banner) return;
-
-    try {
-        const response = await fetch('/api/me');
-        const userData = await response.json();
-        const messages = [
-            "Yo! ",
-            "Well hey there, ",
-            "welcome back ",
-            "Greetings, ",
-            "HEYYYY ",
-            "Hiya, ",
-            "What’s up, ",
-            "Hey hey, "
-        ];
-
-        if (!userData.error) {
-
-            banner.innerHTML = `
-                <div class="banner-content">
-                    <div class="banner-text">
-                        <div style="display: flex; align-items: center;">
-                            <img src="${userData.images[0].url}" alt="User avatar" style="width: 50px; height: 50px; border-radius: 50%; margin-right: 15px;">
-                            <p><strong>${messages[Math.floor(Math.random() * messages.length)]}${userData.display_name}!</strong> View your Spotify statistics, liked songs, and playlists.</p>
-                        </div>
-                    </div>
-                </div>
-                </div>
-                    <button onclick="window.location.href='/you'" class="spotify-button" style="padding: 10px 18px; font-size: 14px; margin-right: 10px;">
-                        <i class="fas fa-user"></i>Go to your page
-                    </button>
-                    <button class="banner-close" onclick="closeBanner()">
-                        <i class="fas fa-times"></i>
-                    </button>
-            `;
-        }
-    } catch (error) {
-        console.error('Error checking auth status:', error);
-    }
-}
-
 document.addEventListener('DOMContentLoaded', () => {
-    const banner = document.querySelector('.auth-banner');
-    if (localStorage.getItem('bannerClosed') === 'true') {
-        banner.style.display = 'none';
-    } else {
-        updateAuthBanner();
-    }
+    const logo = document.querySelector('.spotdb-logo');
+
+    logo.addEventListener("mouseenter", () => {
+            logo.src = '/spotdb/SpotDB_themed.png';
+        });
+
+        logo.addEventListener("mouseleave", () => {
+            logo.src = '/spotdb/SpotDB_White.png';
+        });
 });

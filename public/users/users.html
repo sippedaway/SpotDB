@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Users | SpotDB</title>
+    <title>Users — SpotDB</title>
     <link rel="icon" href="/spotdb/favicon.png">
 
     <meta name="description" content="SpotDB is a platform to explore all information for any Spotify release: songs, artists, albums, users, playlists and more...">
@@ -17,23 +17,70 @@
     <link rel="stylesheet" href="/home/styles.css">
     <link rel="stylesheet" href="/nav/styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+    <style>
+        .guide-image {
+            width: 60%;
+            height: auto;
+            border-radius: 8px;
+            margin-top: 2%;
+            margin-bottom: 2%;
+        }
+        .images-div {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            align-items: center;
+        }
+        @media (max-width: 600px) {
+            .guide-image {
+                width: 90%;
+            }
+            .images-div {
+                flex-direction: column;
+            }
+        }
+    </style>
 </head>
 <body>
 
 
     <div class="page">
-        <h1>Spotify public profile information</h1>
-        <p>Find any Spotify User's all public and hidden information easily</p>
+        <h1>Find a Spotify profile</h1>
 
-        <h3>How to use the Search</h3>
-        <p>Put in the exact name or a Spotify User ID (Recommended) to fetch all information</p>
+        <div class="search-container">
+            <input type="text" id="search-input" placeholder="Enter a Spotify User ID">
+            <button id="search-btn"><i class="fas fa-external-link" style="margin-right: 5px"></i>Go</button>
+        </div>
 
-        <h3>Why can't I find myself?</h3>
-        <p>Spotify's API does not allow searching Users, however you can simply put in your Spotify User ID to get all data! You <b>can</b> search up your Display Name, but it not always works, due to how Spotify's ID fetching work. We suggest using User IDs, found in the URL of a User page - that always works</p>
+        <h3>What do I search?</h3>
+        <p>Put in the exact User ID (Recommended) to go to the user's profile page. In rare scenarios, putting in the user's username could work, though that is not recommended.</p>
 
-        <div class="search-container" style="margin-top: 8%">
-            <input type="text" id="search-input" placeholder="Enter a Spotify Display Name or User ID">
-            <button id="search-btn">Search</button>
+        <h3>How to find User ID?</h3>
+        <p>
+            You <b>cannot</b> find the User ID on the mobile app! Use a web browser or the desktop app.
+
+            <br><br>
+            <b>A. Spotify browser</b>
+            <br>
+            1. Open Spotify in your web browser and log in to your account<br>
+            2. Go to the user's profile page<br>
+            3. Look at the URL in the address bar. The User ID is the string of characters that appears after "user/" in the URL
+            4. Copy that User ID!
+
+            <br><br>
+
+            <b>B. Spotify desktop app</b>
+            <br>
+            1. Go to the user's profile page in the Spotify app<br>
+            2. Click on the <i class="fas fa-ellipsis-v" style="margin-left: 5px; margin-right: 8px"></i>(three dots) button, "Copy link to profile", and paste it somewhere you can read it<br>
+            3. Look at the pasted URL. The User ID is the string of characters that appears after "user/" in the URL
+            4. Copy that User ID!
+        </p>
+
+        <div class="images-div">
+            <img src="/users/guide.png" alt="How to find ID" class="guide-image">
+            <img src="/users/guide_app.png" alt="How to find ID" class="guide-image">
         </div>
     </div>
 

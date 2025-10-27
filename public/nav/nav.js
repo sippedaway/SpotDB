@@ -177,11 +177,11 @@ function createNav() {
         });
 
         logo.addEventListener("mouseenter", () => {
-            logo.src = 'https://raw.githubusercontent.com/sippedaway/SpotDB/refs/heads/main/public/spotdb/SpotDB_themed.png';
+            logo.src = '/spotdb/SpotDB_themed.png';
         });
 
         logo.addEventListener("mouseleave", () => {
-            logo.src = 'https://raw.githubusercontent.com/sippedaway/SpotDB/refs/heads/main/public/spotdb/SpotDB_White.png';
+            logo.src = '/spotdb/SpotDB_White.png';
         });
 
         const navSearchInput = nav.querySelector('#nav-search-input');
@@ -320,6 +320,7 @@ listWrap.querySelectorAll('.nav-section').forEach(sec => sec.remove());
     listWrap.appendChild(createListSection('Artists', data.artists || []));
 
     panel.querySelector('.nav-search-results').style.paddingBottom = '170px';
+    panel.querySelector('.nav-search-results').style.paddingTop = '64px';
 }
 
         navSearchInput.addEventListener('input', (e) => {
@@ -374,6 +375,5 @@ function handleSignOut() {
         })
         .catch(error => console.error('Error signing out:', error));
 }
-
 
 createNav();

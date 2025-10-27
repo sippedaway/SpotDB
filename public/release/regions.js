@@ -62,7 +62,7 @@ const regionMappings = {
     "TH": "Thailand",
     "VN": "Vietnam",
     "RO": "Romania",
-    "IL": "Israel",
+    "IL": "I****l",
     "ZA": "South Africa",
     "SA": "Saudi Arabia",
     "AE": "United Arab Emirates",

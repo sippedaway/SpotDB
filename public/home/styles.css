@@ -503,6 +503,7 @@ body.dark-mode .auth-banner {
 .spotdb-logo {
     width: 200px;
     height: auto;
+    cursor: help;
 }
 
 .search-item:hover {

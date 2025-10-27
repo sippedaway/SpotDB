@@ -16,6 +16,8 @@ const CLIENT_ID = process.env.CLIENT_ID;
 const CLIENT_SECRET = process.env.CLIENT_SECRET;
 const REDIRECT_URI = 'http://localhost:3000/auth/callback';
 
+const LASTFM_API_KEY = process.env.LASTFM_API_KEY;
+
 let accessToken = '';
 let you_accesstoken = '';
 
@@ -667,6 +669,52 @@ app.get('/api/search/advanced', async (req, res) => {
     } catch (error) {
         console.error('Error during Spotify search request:', error);
         res.status(500).json({ error: 'Failed to fetch search results' });
+    }
+});
+
+app.get('/api/lastfm', async (req, res) => {
+    try {
+        if (!LASTFM_API_KEY) {
+            return res.status(500).json({ error: 'Last.fm API key not set' });
+        }
+
+        const allowedMethods = new Set([
+            'artist.getinfo',
+            'artist.getsimilar',
+            'artist.gettoptags',
+            'artist.gettopalbums',
+            'artist.gettoptracks',
+            'album.getinfo',
+            'album.gettoptags',
+            'track.getinfo',
+            'track.getsimilar',
+            'track.gettoptags'
+        ]);
+
+        const method = req.query.method?.toLowerCase();
+        if (!method || !allowedMethods.has(method)) {
+            return res.status(400).json({ error: 'Invalid or unsupported Last.fm method' });
+        }
+
+        const params = new URLSearchParams({
+            ...Object.fromEntries(Object.entries(req.query)),
+            api_key: LASTFM_API_KEY,
+            format: 'json'
+        });
+
+        const url = `https://ws.audioscrobbler.com/2.0/?${params.toString()}`;
+        const response = await fetch(url);
+
+        if (!response.ok) {
+            throw new Error(`Last.fm request failed: ${response.status}`);
+        }
+
+        const data = await response.json();
+        res.json(data);
+
+    } catch (err) {
+        console.error('Error fetching from Last.fm:', err);
+        res.status(500).json({ error: 'Failed to fetch from Last.fm' });
     }
 });
 

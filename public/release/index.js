@@ -4,6 +4,75 @@ const menuContainer = document.querySelector('.menu');
 const tabsContainer = document.querySelector('.tabs');
 let currentTab = 'tracklist';
 
+function lastfmFetch(params) {
+    return fetch(`/api/lastfm?${params}`)
+        .then(r => r.ok ? r.json() : Promise.reject(new Error('Backend Last.fm request failed')))
+        .catch(err => {
+            console.error('Backend Last.fm fetch error:', err);
+            return null;
+        });
+}
+
+async function fetchLastfmArtist(artistName) {
+    const info = await lastfmFetch(`method=artist.getinfo&artist=${encodeURIComponent(artistName)}`);
+    const similar = await lastfmFetch(`method=artist.getsimilar&artist=${encodeURIComponent(artistName)}`);
+    const topTags = await lastfmFetch(`method=artist.gettoptags&artist=${encodeURIComponent(artistName)}`);
+    const topAlbums = await lastfmFetch(`method=artist.gettopalbums&artist=${encodeURIComponent(artistName)}`);
+    const topTracks = await lastfmFetch(`method=artist.gettoptracks&artist=${encodeURIComponent(artistName)}`);
+
+    const listeners = info?.artist?.stats?.listeners ?? null;
+    const playcount = info?.artist?.stats?.playcount ?? null;
+    const similarArtists = (similar?.similarartists?.artist || []).map(a => ({ name: a.name }));
+
+    console.group('Last.fm — Artist');
+    console.log('Artist:', artistName);
+    console.log('Listeners:', listeners);
+    console.log('Playcount:', playcount);
+    console.log('Similar artists:', similarArtists);
+    console.log('Top Tags:', topTags?.toptags?.tag || []);
+    console.log('Top Albums:', topAlbums?.topalbums?.album || []);
+    console.log('Top Tracks:', topTracks?.toptracks?.track || []);
+    console.groupEnd();
+}
+
+async function fetchLastfmAlbum(artistName, albumName) {
+    const info = await lastfmFetch(`method=album.getinfo&artist=${encodeURIComponent(artistName)}&album=${encodeURIComponent(albumName)}`);
+    const topTags = await lastfmFetch(`method=album.gettoptags&artist=${encodeURIComponent(artistName)}&album=${encodeURIComponent(albumName)}`);
+
+    const listeners = info?.album?.listeners ?? info?.album?.stats?.listeners ?? null;
+    const playcount = info?.album?.playcount ?? info?.album?.stats?.playcount ?? null;
+
+    console.group('Last.fm — Album');
+    console.log('Album:', albumName);
+    console.log('Artist:', artistName);
+    console.log('Listeners:', listeners);
+    console.log('Playcount:', playcount);
+    console.log('Top Tags:', topTags?.toptags?.tag || []);
+    console.groupEnd();
+}
+
+async function fetchLastfmTrack(artistName, trackName) {
+    const info = await lastfmFetch(`method=track.getinfo&artist=${encodeURIComponent(artistName)}&track=${encodeURIComponent(trackName)}`);
+    const similar = await lastfmFetch(`method=track.getsimilar&artist=${encodeURIComponent(artistName)}&track=${encodeURIComponent(trackName)}`);
+    const topTags = await lastfmFetch(`method=track.gettoptags&artist=${encodeURIComponent(artistName)}&track=${encodeURIComponent(trackName)}`);
+
+    const listeners = info?.track?.listeners ?? null;
+    const playcount = info?.track?.playcount ?? null;
+    const similarTracks = (similar?.similartracks?.track || []).map(t => ({
+        name: t.name,
+        artist: t.artist?.name || t.artist
+    }));
+
+    console.group('Last.fm — Track');
+    console.log('Track:', trackName);
+    console.log('Artist:', artistName);
+    console.log('Listeners:', listeners);
+    console.log('Playcount:', playcount);
+    console.log('Similar tracks:', similarTracks);
+    console.log('Top Tags:', topTags?.toptags?.tag || []);
+    console.groupEnd();
+}
+
 async function fetchData() {
     try {
         const response = await fetch(`/api/get/${id}`);
@@ -15,6 +84,11 @@ async function fetchData() {
 
         if (data.type === 'album') {
             const albumButtons = [{
+                    text: 'Statistics',
+                    tabId: 'statistics',
+                    icon: 'fas fa-chart-bar'
+                },
+                {
                     text: 'Artists',
                     tabId: 'artists',
                     icon: 'fas fa-users'
@@ -54,6 +128,11 @@ async function fetchData() {
             populateAlbumPage(data);
         } else if (data.type === 'artist') {
             const artistButtons = [{
+                    text: 'Statistics',
+                    tabId: 'statistics',
+                    icon: 'fas fa-chart-bar'
+                },
+                {
                     text: 'Discography',
                     tabId: 'discography',
                     icon: 'fas fa-record-vinyl'
@@ -83,6 +162,11 @@ async function fetchData() {
             populateArtistPage(data);
         } else if (data.type === 'track') {
             const trackButtons = [{
+                    text: 'Statistics',
+                    tabId: 'statistics',
+                    icon: 'fas fa-chart-bar'
+                },
+                {
                     text: 'Artists',
                     tabId: 'artists',
                     icon: 'fas fa-users'
@@ -289,7 +373,7 @@ function convertToLocalTime(isoString) {
 }
 
 async function populateAlbumPage(data) {
-    pagename = `${data.name} | SpotDB`;
+    pagename = `${data.name} — SpotDB`;
     pgdescription = `All information about ${data.name} by ${data.artists?.[0].name} on SpotDB`;
     document.title = pagename;
     document.querySelector('meta[property="og:title"]').setAttribute("content", pagename);
@@ -484,7 +568,7 @@ contentContainer.insertBefore(topSection, contentContainer.firstChild);
     table.innerHTML = `
         <tr><td>Type</td><td>${data.album_type}</td></tr>
         <tr><td>ID</td><td>${id}</td></tr>
-        <tr><td>Genres</td><td>${data.genres?.map(c => c.text).join(', ') || "None provided"}</td></tr>
+        <tr><td>Top Tags</td><td id="top-tags-album">Loading...</td></tr>
         <tr><td>Release Date</td><td>${data.release_date || 'N/A'}</td></tr>
         <tr><td>Popularity</td><td>${data.popularity || 'N/A'}</td></tr>
         <tr><td>Total tracks</td><td>${data.total_tracks || 'N/A'}</td></tr>
@@ -498,12 +582,13 @@ contentContainer.insertBefore(topSection, contentContainer.firstChild);
 
     topSection.appendChild(tar);
 
-    createArtistsTab(data);
+    createArtistsTab(data, true);
     createTracklistTab(data);
     createRegionTab(data);
     createIDsTab(data);
     createMediaTab(data);
     createEmbedTab(data, 'album');
+    createStatisticsTab('album', { artistName: data.artists?.[0]?.name, albumName: data.name });
     createMoreTab(data);
 
     if (data.artists.length > 1) {
@@ -515,42 +600,168 @@ contentContainer.insertBefore(topSection, contentContainer.firstChild);
     console.log(data);
 }
 
-async function createMediaTab(data) {
+async function createMediaTab(data, track = false) {
     const mediatab = document.createElement('div');
     mediatab.id = 'media';
     mediatab.classList.add('tab-content');
-    mediatab.innerHTML = `<h3>Images</h3>`;
+    mediatab.innerHTML = `<h3>${track ? 'Track images' : 'Images'}</h3>`;
 
-    if (data.images && Array.isArray(data.images)) {
-        data.images.forEach(image => {
-            const imageContainer = document.createElement('div');
-            imageContainer.classList.add('image-item');
+    const images = track
+        ? (data.album && Array.isArray(data.album.images) ? data.album.images : [])
+        : (Array.isArray(data.images) ? data.images : []);
 
-            const img = document.createElement('img');
-            img.src = image.url;
-            img.alt = image.name || 'Album Image';
-            img.addEventListener("click", () => handleImageClick(img.src));
-
-            img.onload = () => {
-                const width = img.naturalWidth;
-                const height = img.naturalHeight;
-
-                const name = document.createElement('p');
-                name.textContent = `${width}x${height}`;
-
-                imageContainer.appendChild(img);
-                imageContainer.appendChild(name);
-            };
-
-            mediatab.appendChild(imageContainer);
-        });
-    } else {
+    if (images.length === 0) {
         const noImagesMessage = document.createElement('p');
-        noImagesMessage.textContent = 'No images available for this album.';
+        noImagesMessage.textContent = track
+            ? 'No images available for this album.'
+            : 'No images available for this item.';
+        noImagesMessage.style.textAlign = 'center';
+        noImagesMessage.style.color = '#888';
+        noImagesMessage.style.fontStyle = 'italic';
         mediatab.appendChild(noImagesMessage);
+        tabsContainer.appendChild(mediatab);
+        return;
     }
 
+    const viewer = document.createElement('div');
+    viewer.classList.add('image-viewer');
+    viewer.style.display = 'flex';
+    viewer.style.flexDirection = 'column';
+    viewer.style.alignItems = 'center';
+    viewer.style.justifyContent = 'center';
+    viewer.style.gap = '10px';
+    viewer.style.padding = '10px';
+    viewer.style.position = 'relative';
+    viewer.style.minHeight = '480px';
+
+    const imageWrapper = document.createElement('div');
+    imageWrapper.style.display = 'flex';
+    imageWrapper.style.alignItems = 'center';
+    imageWrapper.style.justifyContent = 'center';
+    imageWrapper.style.position = 'relative';
+    imageWrapper.style.width = '100%';
+    imageWrapper.style.maxWidth = '600px';
+
+    const prevBtn = document.createElement('button');
+    prevBtn.innerHTML = '<i style="font-size:18px" class="fas fa-arrow-left"></i>';
+    prevBtn.classList.add('image-prev');
+    Object.assign(prevBtn.style, {
+        border: 'none',
+        background: 'rgba(88, 88, 88, 0.7)',
+        borderRadius: '50%',
+        width: '40px',
+        height: '40px',
+        fontSize: '18px',
+        cursor: 'pointer',
+        position: 'absolute',
+        left: '-60px',
+        transition: 'background 0.2s ease'
+    });
+    prevBtn.onmouseover = () => (prevBtn.style.background = 'rgba(114,114,114,0.9)');
+    prevBtn.onmouseout = () => (prevBtn.style.background = 'rgba(88,88,88,0.7)');
+
+    const nextBtn = document.createElement('button');
+    nextBtn.innerHTML = '<i style="font-size:18px" class="fas fa-arrow-right"></i>';
+    nextBtn.classList.add('image-next');
+    Object.assign(nextBtn.style, {
+        border: 'none',
+        background: 'rgba(88, 88, 88, 0.7)',
+        borderRadius: '50%',
+        width: '40px',
+        height: '40px',
+        fontSize: '18px',
+        cursor: 'pointer',
+        position: 'absolute',
+        right: '-60px',
+        transition: 'background 0.2s ease'
+    });
+    nextBtn.onmouseover = () => (nextBtn.style.background = 'rgba(114,114,114,0.9)');
+    nextBtn.onmouseout = () => (nextBtn.style.background = 'rgba(88,88,88,0.7)');
+
+    const img = document.createElement('img');
+    img.classList.add('image-preview');
+    img.style.maxWidth = '100%';
+    img.style.maxHeight = '400px';
+    img.style.borderRadius = '10px';
+    img.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.15)';
+    img.style.cursor = 'pointer';
+    img.style.transition = 'border 0.2s ease';
+    img.style.border = '1px solid transparent';
+    img.title = 'Click to save image';
+    img.onmouseover = () => (img.style.border = '1px solid white');
+    img.onmouseout = () => (img.style.border = '1px solid transparent');
+
+    imageWrapper.appendChild(prevBtn);
+    imageWrapper.appendChild(img);
+    imageWrapper.appendChild(nextBtn);
+
+    const info = document.createElement('p');
+    info.classList.add('image-info');
+    info.style.margin = '5px 0 0 0';
+    info.style.color = '#555';
+    info.style.fontSize = '14px';
+    info.style.textAlign = 'center';
+
+    const counter = document.createElement('p');
+    counter.classList.add('image-counter');
+    counter.style.margin = '0';
+    counter.style.color = '#999';
+    counter.style.fontSize = '13px';
+    counter.style.textAlign = 'center';
+
+    const hint = document.createElement('p');
+    hint.classList.add('image-hint');
+    hint.innerHTML = track
+        ? 'Click on an image to copy or save it<br>These are all images attached to this track\'s album'
+        : 'Click on the image to copy or save it<br>These are all images attached to this item';
+    hint.style.margin = '5px 0 0 0';
+    hint.style.color = '#aaa';
+    hint.style.fontSize = '12px';
+    hint.style.textAlign = 'center';
+
+    viewer.appendChild(imageWrapper);
+    viewer.appendChild(info);
+    viewer.appendChild(counter);
+    viewer.appendChild(hint);
+    mediatab.appendChild(viewer);
     tabsContainer.appendChild(mediatab);
+
+    let currentIndex = 0;
+
+    function updateImage() {
+        const currentImage = images[currentIndex];
+        img.src = currentImage.url;
+        img.alt = currentImage.name || `Image ${currentIndex + 1}`;
+
+        img.onload = () => {
+            const width = img.naturalWidth;
+            const height = img.naturalHeight;
+            info.textContent = `${width}×${height} pixels`;
+            counter.textContent = `${currentIndex + 1} / ${images.length} images`;
+        };
+
+        const single = images.length <= 1;
+        prevBtn.disabled = single;
+        nextBtn.disabled = single;
+        prevBtn.style.opacity = single ? '0.4' : '1';
+        nextBtn.style.opacity = single ? '0.4' : '1';
+    }
+
+    prevBtn.addEventListener('click', () => {
+        currentIndex = (currentIndex - 1 + images.length) % images.length;
+        updateImage();
+    });
+
+    nextBtn.addEventListener('click', () => {
+        currentIndex = (currentIndex + 1) % images.length;
+        updateImage();
+    });
+
+    img.addEventListener('click', () => {
+        handleImageClick(img.src);
+    });
+
+    updateImage();
 }
 
 async function createMoreTab(data) {
@@ -640,7 +851,175 @@ async function createMoreTab(data) {
     tabsContainer.appendChild(moreTab);
 }
 
-async function createArtistsTab(data) {
+async function createStatisticsTab(type, opts = {}) {
+
+    const existing = tabsContainer.querySelector('#statistics');
+    if (existing) existing.remove();
+
+    const statsTab = document.createElement('div');
+    statsTab.id = 'statistics';
+    statsTab.classList.add('tab-content');
+    statsTab.innerHTML = `<h3>Statistics</h3><p id="statistics-loading">Loading...</p>`;
+    tabsContainer.appendChild(statsTab);
+
+    try {
+        if (type === 'artist') {
+            const artistName = opts.artistName;
+            const info = await lastfmFetch(`method=artist.getinfo&artist=${encodeURIComponent(artistName)}`);
+            const similar = await lastfmFetch(`method=artist.getsimilar&artist=${encodeURIComponent(artistName)}`);
+            const topTags = await lastfmFetch(`method=artist.gettoptags&artist=${encodeURIComponent(artistName)}`);
+
+            const listeners = info?.artist?.stats?.listeners != null 
+                ? Number(info.artist.stats.listeners).toLocaleString() 
+                : 'N/A';
+
+            const playcount = info?.artist?.stats?.playcount != null 
+                ? Number(info.artist.stats.playcount).toLocaleString() 
+                : 'N/A';
+
+            const tags = (topTags?.toptags?.tag || []).slice(0,10).map(t => t.name);
+            const tagsf = (topTags?.toptags?.tag || []).slice(0,3).map(t => t.name);
+            const similarList = (similar?.similarartists?.artist || []).slice(0,10).map(a => a.name);
+
+            const tagsHtml = tags.length 
+                ? `<div class="tags-container" style="display: flex; gap: 10px; flex-wrap: wrap; cursor: help;">
+                    ${tags.map(tag => `<span class="meta-item">${tag}</span>`).join('')}</div>` 
+                : 'None';
+
+            const similarArtistsHtml = tags.length 
+                ? `<div class="tags-container" style="display: flex; gap: 10px; flex-wrap: wrap; cursor: help;">
+                    ${similarList.map(tag => `<span class="meta-item">${tag}</span>`).join('')}</div>` 
+                : 'None';
+
+            statsTab.innerHTML = `
+                <h3>Statistics</h3>
+                <p>These are <b>${artistName}</b>'s statistics from <a href="https://last.fm/">Last.fm</a>, hence they may differ from Spotify's official hidden statistics.</p>
+                <div style="display: flex; gap: 30px; margin-bottom: 15px;">    
+                    <div class="statistics-listeners">
+                        <h1><i class="fas fa-users" style="margin-right: 15px"></i>Listeners</h1>
+                        <p>${listeners}</p>
+                    </div>
+                    <div class="statistics-listeners">
+                        <h1><i class="fas fa-headphones" style="margin-right: 15px"></i>Playcount</h1>
+                        <p>${playcount}</p>
+                    </div>
+                </div>
+                <hr style="color: #444; margin: 20px 0;">
+                <p>Related tags:</p>
+                ${tagsHtml}
+                <hr style="color: #444; margin: 20px 0;">
+                <p>Similar artists:</p>
+                ${similarArtistsHtml}
+            `;
+
+            const tagCell = document.getElementById('top-tags-artist');
+            if (tagCell) tagCell.textContent = tagsf.length ? tagsf.join(', ') : 'None';
+        } else if (type === 'album') {
+            const { artistName, albumName } = opts;
+            const info = await lastfmFetch(`method=album.getinfo&artist=${encodeURIComponent(artistName)}&album=${encodeURIComponent(albumName)}`);
+            const topTags = await lastfmFetch(`method=album.gettoptags&artist=${encodeURIComponent(artistName)}&album=${encodeURIComponent(albumName)}`);
+
+            const listeners = info?.album?.listeners != null 
+                ? Number(info.album.listeners).toLocaleString() 
+                : 'N/A';
+
+            const playcount = info?.album?.playcount != null 
+                ? Number(info.album.playcount).toLocaleString() 
+                : 'N/A';
+            const tags = (topTags?.toptags?.tag || []).slice(0,10).map(t => t.name);
+            const tagsf = (topTags?.toptags?.tag || []).slice(0,3).map(t => t.name);
+
+            const tagsHtml = tags.length 
+                ? `<div class="tags-container" style="display: flex; gap: 10px; flex-wrap: wrap; cursor: help;">
+                    ${tags.map(tag => `<span class="meta-item">${tag}</span>`).join('')}</div>` 
+                : 'None';
+
+            statsTab.innerHTML = `
+                <h3>Statistics</h3>
+                <p>These are <b>${albumName}</b>'s statistics from <a href="https://last.fm/">Last.fm</a>, hence they may differ from Spotify's official hidden statistics.</p>
+                <div style="display: flex; gap: 30px; margin-bottom: 15px;">    
+                    <div class="statistics-listeners">
+                        <h1><i class="fas fa-users" style="margin-right: 15px"></i>Listeners</h1>
+                        <p>${listeners}</p>
+                    </div>
+                    <div class="statistics-listeners">
+                        <h1><i class="fas fa-headphones" style="margin-right: 15px"></i>Playcount</h1>
+                        <p>${playcount}</p>
+                    </div>
+                </div>
+                <hr style="color: #444; margin: 20px 0;">
+                <p>Related tags:</p>
+                ${tagsHtml}
+            `;
+
+            const tagCell = document.getElementById('top-tags-album');
+            if (tagCell) tagCell.textContent = tagsf.length ? tagsf.join(', ') : 'None';
+        } else if (type === 'track') {
+            const { artistName, trackName } = opts;
+            const info = await lastfmFetch(`method=track.getinfo&artist=${encodeURIComponent(artistName)}&track=${encodeURIComponent(trackName)}`);
+            const similar = await lastfmFetch(`method=track.getsimilar&artist=${encodeURIComponent(artistName)}&track=${encodeURIComponent(trackName)}`);
+            const topTags = await lastfmFetch(`method=track.gettoptags&artist=${encodeURIComponent(artistName)}&track=${encodeURIComponent(trackName)}`);
+
+            const listeners = info?.track?.listeners != null 
+                ? Number(info.track.listeners).toLocaleString() 
+                : 'N/A';
+
+            const playcount = info?.track?.playcount != null 
+                ? Number(info.track.playcount).toLocaleString() 
+                : 'N/A';
+
+            const tags = (topTags?.toptags?.tag || []).slice(0,10).map(t => t.name);
+            const tagsf = (topTags?.toptags?.tag || []).slice(0,3).map(t => t.name);
+            const similarList = (similar?.similartracks?.track || []).slice(0,10).map(t => `${t.name} — ${t.artist?.name || t.artist}`);
+
+            const tagsHtml = tags.length 
+                ? `<div class="tags-container" style="display: flex; gap: 10px; flex-wrap: wrap; cursor: help;">
+                    ${tags.map(tag => `<span class="meta-item">${tag}</span>`).join('')}</div>` 
+                : 'None';
+
+            const similarArtistsHtml = tags.length 
+                ? `<div class="tags-container" style="display: flex; gap: 10px; flex-wrap: wrap; cursor: help;">
+                    ${similarList.map(tag => `<span class="meta-item">${tag}</span>`).join('')}</div>` 
+                : 'None';
+
+            statsTab.innerHTML = `
+                <h3>Statistics</h3>
+                <p>These are <b>${trackName}</b>'s statistics from <a href="https://last.fm/">Last.fm</a>, hence they may differ from Spotify's official hidden statistics.</p>
+                <div style="display: flex; gap: 30px; margin-bottom: 15px;">    
+                    <div class="statistics-listeners">
+                        <h1><i class="fas fa-users" style="margin-right: 15px"></i>Listeners</h1>
+                        <p>${listeners}</p>
+                    </div>
+                    <div class="statistics-listeners">
+                        <h1><i class="fas fa-headphones" style="margin-right: 15px"></i>Playcount</h1>
+                        <p>${playcount}</p>
+                    </div>
+                </div>
+                <hr style="color: #444; margin: 20px 0;">
+                <p>Related tags:</p>
+                ${tagsHtml}
+                <hr style="color: #444; margin: 20px 0;">
+                <p>Similar tracks:</p>
+                ${similarArtistsHtml}
+            `;
+
+            const tagCell = document.getElementById('top-tags-album');
+            if (tagCell) tagCell.textContent = tagsf.length ? tagsf.join(', ') : 'None';
+        } else {
+            statsTab.innerHTML = `<h3>Statistics</h3><p>No data available for this type.</p>`;
+        }
+    } catch (err) {
+        console.error('Error loading Last.fm statistics:', err);
+        statsTab.innerHTML = `<h3>Statistics</h3><p>Failed to load Last.fm data.</p>`;
+
+        ['top-tags-album','top-tags-artist','top-tags-track'].forEach(id => {
+            const el = document.getElementById(id);
+            if (el && el.textContent === 'Loading...') el.textContent = 'N/A';
+        });
+    }
+}
+
+async function createArtistsTab(data, album = false) {
     const artistTab = document.createElement('div');
     artistTab.id = 'artists';
     artistTab.classList.add('tab-content');
@@ -648,28 +1027,28 @@ async function createArtistsTab(data) {
 
     if (Array.isArray(data.artists) && data.artists.length > 0) {
         for (const artist of data.artists) {
-            const ar = await fetchArtistDetails(artist.id);
 
-            const item = document.createElement('a');
-            item.classList.add('track-item');
-            item.classList.add('artist-item');
-            item.href = `/r/${artist.id}`;
-            item.style.textDecoration = 'none';
-            item.style.color = 'inherit';
+            fetchArtistDetails(artist.id).then(ar => {
+                const item = document.createElement('a');
+                item.classList.add('track-item', 'artist-item');
+                item.href = `/r/${artist.id}`;
+                item.style.textDecoration = 'none';
+                item.style.color = 'inherit';
 
-            const artistname = document.createElement('div');
-            artistname.classList.add('track-name');
-            artistname.textContent = artist.name;
+                const artistname = document.createElement('div');
+                artistname.classList.add('track-name');
+                artistname.textContent = artist.name;
 
-            const artistimg = document.createElement('img');
-            artistimg.classList.add('artist-img');
-            artistimg.src = ar.image;
-            artistimg.alt = `${artist.name} Image`;
+                const artistimg = document.createElement('img');
+                artistimg.classList.add('artist-img');
+                artistimg.src = ar.image;
+                artistimg.alt = `${artist.name} Image`;
 
-            item.appendChild(artistimg);
-            item.appendChild(artistname);
+                item.appendChild(artistimg);
+                item.appendChild(artistname);
 
-            artistTab.appendChild(item);
+                artistTab.appendChild(item);
+            });
         }
     } else {
         artistTab.innerHTML += '<p>No artists available.</p>';
@@ -679,6 +1058,119 @@ async function createArtistsTab(data) {
         tabsContainer.appendChild(artistTab);
     } else {
         console.error("tabsContainer is not defined or is null");
+    }
+
+    if (album && data.tracks && Array.isArray(data.tracks.items)) {
+        loadFeaturedArtists(data, artistTab);
+    }
+}
+
+async function loadFeaturedArtists(data, artistTab) {
+    const mainArtistIds = new Set(data.artists.map(a => a.id));
+    const featuredArtistsMap = {}; 
+
+    for (const track of data.tracks.items) {
+        for (const artist of track.artists) {
+            if (!mainArtistIds.has(artist.id)) {
+                if (!featuredArtistsMap[artist.id]) {
+                    const ar = await fetchArtistDetails(artist.id);
+                    featuredArtistsMap[artist.id] = {
+                        name: artist.name,
+                        image: ar.image,
+                        tracks: []
+                    };
+                }
+                featuredArtistsMap[artist.id].tracks.push({
+                    name: track.name,
+                    albumImage: data.images[0]?.url,
+                    track_number: track.track_number
+                });
+            }
+        }
+    }
+
+    const featuredIds = Object.keys(featuredArtistsMap);
+    if (featuredIds.length > 0) {
+        const featuredContainer = document.createElement('div');
+        featuredContainer.classList.add('featured-artists');
+        featuredContainer.innerHTML = '<h3>Featured Artists</h3>';
+
+        for (const id of featuredIds) {
+            const artistData = featuredArtistsMap[id];
+
+            const item = document.createElement('a');
+            item.classList.add('track-item', 'artist-item');
+            item.href = `/r/${id}`;
+            item.style.textDecoration = 'none';
+            item.style.color = 'inherit';
+
+            const urgh = document.createElement('div');
+
+            const p1 = document.createElement('div');
+            p1.style.display = 'flex';
+            p1.style.alignItems = 'center';
+            p1.style.gap = '15px';
+
+            const artistname = document.createElement('div');
+            artistname.classList.add('track-name');
+            artistname.textContent = artistData.name;
+
+            const artistimg = document.createElement('img');
+            artistimg.classList.add('artist-img');
+            artistimg.src = artistData.image;
+            artistimg.alt = `${artistData.name} Image`;
+
+            p1.appendChild(artistimg);
+            p1.appendChild(artistname);
+            urgh.appendChild(p1);
+
+            const tracksDiv = document.createElement('div');
+            tracksDiv.classList.add('track-list');
+            tracksDiv.style.display = 'flex';
+            tracksDiv.style.flexDirection = 'column';
+            tracksDiv.style.gap = '5px';
+            tracksDiv.style.marginTop = '10px';
+
+            for (const track of artistData.tracks) {
+                const trackDiv = document.createElement('div');
+                trackDiv.style.display = 'flex';
+                trackDiv.style.alignItems = 'center';
+                trackDiv.style.gap = '10px';
+
+                const albumImg = document.createElement('img');
+                albumImg.src = track.albumImage;
+                albumImg.alt = `${track.name} Album Cover`;
+                albumImg.style.width = '40px';
+                albumImg.style.height = '40px';
+                albumImg.style.borderRadius = '6px';
+                albumImg.style.objectFit = 'cover';
+
+                const trackName = document.createElement('div');
+                trackName.textContent = track.name;
+
+                const tracknum = document.createElement('div');
+                tracknum.style.background = 'rgba(255, 255, 255, 0.1)';
+                tracknum.style.borderRadius = '50%';
+                tracknum.style.width = '18px';
+                tracknum.style.height = '18px';
+                tracknum.style.display = 'flex';
+                tracknum.style.alignItems = 'center';
+                tracknum.style.justifyContent = 'center';
+                tracknum.style.fontSize = '12px';
+                tracknum.innerHTML = `${track.track_number}`;
+
+                trackDiv.appendChild(albumImg);
+                trackDiv.appendChild(tracknum);
+                trackDiv.appendChild(trackName);
+                tracksDiv.appendChild(trackDiv);
+            }
+
+            urgh.appendChild(tracksDiv);
+            item.appendChild(urgh);
+            featuredContainer.appendChild(item);
+        }
+
+        artistTab.appendChild(featuredContainer);
     }
 }
 
@@ -943,7 +1435,7 @@ function createEmbedTab(data, ln) {
         previewContainer.innerHTML = embedCode;
     });
 
-    copyButton.addEventListener('click', () => {
+    copyButton.addEventListener('click', () => {node 
         embedCodeInput.select();
         document.execCommand('copy');
         alert('Embed code copied to clipboard!');
@@ -953,7 +1445,7 @@ function createEmbedTab(data, ln) {
 }
 
 async function populateArtistPage(data) {
-    pagename = `${data.name} | SpotDB`;
+    pagename = `${data.name} — SpotDB`;
     pgdescription = `All information about ${data.name} by ${data.artists?.[0].name} on SpotDB`;
     document.title = pagename;
     document.querySelector('meta[property="og:title"]').setAttribute("content", pagename);
@@ -1038,7 +1530,7 @@ async function populateArtistPage(data) {
     table.innerHTML = `
         <tr><td>Type</td><td>${data.type}</td></tr>
         <tr><td>ID</td><td>${id}</td></tr>
-        <tr><td>Genres</td><td>${data.genres?.map(c => c.text).join(', ') || "None provided"}</td></tr>
+        <tr><td>Top Tags</td><td id="top-tags-artist">Loading...</td></tr>
         <tr><td>Popularity</td><td>${data.popularity || 'N/A'}</td></tr>
         <tr><td>Followers</td><td>${data.followers.total || 'N/A'}</td></tr>
         <tr><td>Spotify URL</td><td><a href="${data.external_urls?.spotify || '#'}" target="_blank">${data.external_urls?.spotify ? 'Open link' : 'N/A'}</a></td></tr>
@@ -1062,6 +1554,7 @@ async function populateArtistPage(data) {
     createArtistSinglesTab(albumData);
     createMediaTab(data);
     createEmbedTab(data, 'artist');
+    createStatisticsTab('artist', { artistName: data.name });
 
     switchTab('discography');
 }
@@ -1275,7 +1768,7 @@ async function createArtistSinglesTab(albumData) {
 }
 
 async function populateTrackPage(data) {
-    pagename = `${data.name} | SpotDB`;
+    pagename = `${data.name} — SpotDB`;
     pgdescription = `All information about ${data.name} by ${data.artists?.[0].name} on SpotDB`;
     document.title = pagename;
     document.querySelector('meta[property="og:title"]').setAttribute("content", pagename);
@@ -1435,6 +1928,7 @@ async function populateTrackPage(data) {
         <tr><td>Type</td><td>${data.type}</td></tr>
         <tr><td>Duration</td><td>${formatDuration(data.duration_ms)}</td></tr>
         <tr><td>ID</td><td>${id}</td></tr>
+        <tr><td>Top Tags</td><td id="top-tags-album">Loading...</td></tr>
         <tr><td>Popularity</td><td>${data.popularity}</td></tr>
         <tr><td>Rating</td><td>${rating}</td></tr>
         <tr><td>Release Date</td><td>${data.album.release_date || 'N/A'}</td></tr>
@@ -1489,15 +1983,12 @@ async function populateTrackPage(data) {
     createAlbumsTab(data);
     createRegionTab(data);
     createIDsTab(data);
-    createTrackMediaTab(data);
+    createMediaTab(data, true);
     createEmbedTab(data, 'track');
+    createStatisticsTab('track', { artistName: data.artists?.[0]?.name, trackName: data.name });
     createMoreTab(data);
 
-    if (data.artists.length > 1) {
-        switchTab('artists');
-    } else {
-        switchTab('album');
-    }
+    switchTab('statistics');
 
     await createCreditsTab(data);
 }
@@ -1528,44 +2019,6 @@ async function createCreditsTab(data) {
       creditsTab.innerHTML = `<h3>Credits</h3><p>No credits found</p>`;
     }
   }
-
-async function createTrackMediaTab(data) {
-    const mediatab = document.createElement('div');
-    mediatab.id = 'media';
-    mediatab.classList.add('tab-content');
-    mediatab.innerHTML = `<h3>Track images</h3>`;
-
-    if (data.album.images && Array.isArray(data.album.images)) {
-        data.album.images.forEach(image => {
-            const imageContainer = document.createElement('div');
-            imageContainer.classList.add('image-item');
-
-            const img = document.createElement('img');
-            img.src = image.url;
-            img.alt = image.name || 'Track Image';
-            img.addEventListener("click", () => handleImageClick(img.src));
-
-            img.onload = () => {
-                const width = img.naturalWidth;
-                const height = img.naturalHeight;
-
-                const name = document.createElement('p');
-                name.textContent = `${width}x${height}`;
-
-                imageContainer.appendChild(img);
-                imageContainer.appendChild(name);
-            };
-
-            mediatab.appendChild(imageContainer);
-        });
-    } else {
-        const noImagesMessage = document.createElement('p');
-        noImagesMessage.textContent = 'No images available for this album.';
-        mediatab.appendChild(noImagesMessage);
-    }
-
-    tabsContainer.appendChild(mediatab);
-}
 
 async function createAlbumsTab(data) {
     const albumsTab = document.createElement('div');
@@ -1620,7 +2073,7 @@ async function populatePlaylistPage(data) {
     console.log(data);
     const artist = await fetchUserDetails(data.owner.id);
     console.log(artist);
-    pagename = `${data.name} | SpotDB`;
+    pagename = `${data.name} — SpotDB`;
     pgdescription = `All information about ${data.name} by ${data.artists?.[0].name} on SpotDB`;
     document.title = pagename;
     document.querySelector('meta[property="og:title"]').setAttribute("content", pagename);
@@ -1919,7 +2372,7 @@ async function createCreatorsTab(data, artistdata) {
 }
 
 async function populateUserPage(data) {
-    pagename = `${data.display_name} | SpotDB`;
+    pagename = `${data.display_name} — SpotDB`;
     pgdescription = `All information about ${data.name} by ${data.artists?.[0].name} on SpotDB`;
     document.title = pagename;
     document.querySelector('meta[property="og:title"]').setAttribute("content", pagename);
@@ -2131,7 +2584,7 @@ async function createUserPlaylistsTab(user) {
 }
 
 async function populateEpisodesPage(data) {
-    pagename = `${data.name} | SpotDB`;
+    pagename = `${data.name} — SpotDB`;
     pgdescription = `All information about ${data.name} by ${data.artists?.[0].name} on SpotDB`;
     document.title = pagename;
     document.querySelector('meta[property="og:title"]').setAttribute("content", pagename);
@@ -2293,7 +2746,7 @@ async function createDescriptionTab(data) {
 }
 
 async function populateShowPage(data) {
-    pagename = `${data.name} | SpotDB`;
+    pagename = `${data.name} — SpotDB`;
     pgdescription = `All information about ${data.name} by ${data.artists?.[0].name} on SpotDB`;
     document.title = pagename;
     document.querySelector('meta[property="og:title"]').setAttribute("content", pagename);
