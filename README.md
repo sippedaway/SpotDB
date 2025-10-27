@@ -1,4 +1,4 @@
-![db.sipped.org header](https://raw.githubusercontent.com/sippedaway/SpotDB/refs/heads/main/github/spotdb_preview.png)
+![db.sipped.org header](https://raw.githubusercontent.com/sippedaway/SpotDB/refs/heads/main/github/spotdb_1.5preview.png)
 
 [![HTML](https://img.shields.io/badge/HTML-%23E34F26.svg?logo=html5&logoColor=white)](#)
 [![CSS](https://img.shields.io/badge/CSS-1572B6?logo=css3&logoColor=fff)](#)
@@ -31,6 +31,16 @@ However, Spotify's API is still kinda limited. For instance, **user profiles can
 The information you find depends on what you look for, but overall it is **EVERYTHING Spotify stores** in their public API!
 
 ## Version
+#### 1.5
+- **Release date**: 2025-10-27
+- Featured Artists in album pages
+- Last.fm integration - statistics, tags...
+- Updated Media tab
+- Updated Users page
+- Removed home page 'New! Sign-in with Spotify' banner
+- Search results info 'Showing 12 results...'
+- Fixed nav search menu minor issues
+- Pages' title uses different symbol ig
 #### 1.4
 - **Release date**: 2025-10-26
 - Nav search menu
