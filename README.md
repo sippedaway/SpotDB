@@ -48,6 +48,10 @@ The information you find depends on what you look for, but overall it is **EVERY
 - Universal 404 page
 - All items are now hyperlinks
 - Updated SpotDB logo
+
+<details>
+<summary>1.3 - 1.0</summary>
+
 #### 1.3 Fixes
 - **Release date**: 2025-10-23
 - Explicit tag in album tracklists
@@ -95,6 +99,8 @@ The information you find depends on what you look for, but overall it is **EVERY
 #### 1.0
 - **Release date**: 2025-02-08
 - Hosted on Vercel
+
+</details>
 
 ## Legal
 SpotDB is a passion/hobby project made by [me, sipped,](https://github.com/sippedaway) and is **NOT affiliated with Spotify** in any way whatsoever.
